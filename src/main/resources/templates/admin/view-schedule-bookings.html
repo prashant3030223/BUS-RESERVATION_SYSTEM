@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+<main class="main-content">
+<div class="container mt-5">
+    <div class="content-container">
+        <div class="mb-4">
+            <h2>Bookings for Schedule #<span th:text="${schedule.id}"></span></h2>
+            <p class="lead text-muted" th:text="${schedule.bus.busName} + ' - ' + ${schedule.source} + ' to ' + ${schedule.destination}"></p>
+            <p class="text-muted">
+                <i class="fa-solid fa-clock me-2"></i>Departure: 
+                <span th:text="${#temporals.format(schedule.departureTime, 'dd-MMM-yyyy, hh:mm a')}"></span>
+            </p>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover custom-table">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Passenger Name</th>
+                        <th>Email</th>
+                        <th>Seats</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${bookings.isEmpty()}">
+                        <td colspan="5" class="text-center">No bookings found for this schedule.</td>
+                    </tr>
+                    <tr th:each="booking : ${bookings}">
+                        <td th:text="${booking.id}"></td>
+                        <td th:text="${booking.user.fullName}"></td>
+                        <td th:text="${booking.user.email}"></td>
+                        <td th:text="${booking.seatNumbers}"></td>
+                        <td><span class="badge" th:classappend="${booking.status == 'CONFIRMED'} ? 'bg-success' : 'bg-danger'" th:text="${booking.status}"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <a th:href="@{/admin/schedules}" class="btn btn-secondary mt-3">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back to Schedules
+        </a>
+    </div>
+</div>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

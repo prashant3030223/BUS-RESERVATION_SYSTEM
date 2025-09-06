@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+<div class="container mt-5">
+    <div class="col-md-6 mx-auto">
+        <div class="form-container">
+            <h4>Edit Bus Details</h4>
+            <form th:action="@{/admin/buses/update/{id}(id=${bus.id})}" th:object="${bus}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Bus Name</label>
+                    <input type="text" th:field="*{busName}" class="form-control" required/>
+                </div>
+                 <div class="mb-3">
+                    <label class="form-label">Bus Number</label>
+                    <input type="text" th:field="*{busNumber}" class="form-control" required/>
+                </div>
+                 <div class="mb-3">
+                    <label class="form-label">Total Seats</label>
+                    <input type="number" th:field="*{totalSeats}" class="form-control" required/>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Bus</button>
+                <a th:href="@{/admin/buses}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

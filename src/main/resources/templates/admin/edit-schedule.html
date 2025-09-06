@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+<div class="container mt-5">
+    <div class="col-md-6 mx-auto">
+        <div class="form-container">
+            <h4>Edit Schedule Details</h4>
+            <form th:action="@{/admin/schedules/update/{id}(id=${schedule.id})}" th:object="${schedule}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Select Bus</label>
+                    <select name="busId" class="form-control" required>
+                        <option th:each="bus : ${buses}" th:value="${bus.id}" th:text="${bus.busName} + ' - ' + ${bus.busNumber}" th:selected="${schedule.bus != null && schedule.bus.id == bus.id}"></option>
+                    </select>
+                </div>
+                <div class="mb-3"><label class="form-label">Source</label><input type="text" th:field="*{source}" class="form-control" required/></div>
+                <div class="mb-3"><label class="form-label">Destination</label><input type="text" th:field="*{destination}" class="form-control" required/></div>
+                <div class="mb-3"><label class="form-label">Departure Time</label><input type="datetime-local" th:field="*{departureTime}" class="form-control" required/></div>
+                <div class="mb-3"><label class="form-label">Arrival Time</label><input type="datetime-local" th:field="*{arrivalTime}" class="form-control" required/></div>
+                <div class="mb-3"><label class="form-label">Price</label><input type="number" step="0.01" th:field="*{price}" class="form-control" required/></div>
+                <button type="submit" class="btn btn-primary">Update Schedule</button>
+                <a th:href="@{/admin/schedules}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

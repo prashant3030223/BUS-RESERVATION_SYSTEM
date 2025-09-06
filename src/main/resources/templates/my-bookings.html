@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container mt-5">
+    <div class="content-container">
+        <h2 class="mb-4">My Bookings</h2>
+        <div th:if="${param.cancel_success}" class="alert alert-success">Booking successfully cancelled.</div>
+        <div th:if="${param.error}" class="alert alert-danger">You can only cancel your own bookings.</div>
+
+        <div th:if="${bookings.isEmpty()}">
+            <div class="alert alert-info">You have no bookings yet.</div>
+        </div>
+        <div th:if="${!bookings.isEmpty()}">
+            <div class="card mb-3" th:each="booking : ${bookings}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span th:text="'Booking Date: ' + ${#temporals.format(booking.bookingDate, 'dd-MMM-yyyy')}"></span>
+                    <span class="badge" 
+                          th:classappend="${booking.status == 'CONFIRMED'} ? 'bg-success' : 'bg-danger'"
+                          th:text="${booking.status}"></span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${booking.schedule.bus.busName} + ' (' + ${booking.schedule.bus.busNumber} + ')'"></h5>
+                    <p class="card-text"><strong>Route:</strong> <span th:text="${booking.schedule.source}"></span> to <span th:text="${booking.schedule.destination}"></span></p>
+                    <p class="card-text"><strong>Departure:</strong> <span th:text="${#temporals.format(booking.schedule.departureTime, 'dd-MMM-yyyy HH:mm')}"></span></p>
+                    <p class="card-text"><strong>Seat(s):</strong> <b th:text="${booking.seatNumbers}"></b></p>
+                    
+                    <div class="d-flex gap-2 mt-3">
+                        <a th:href="@{/ticket/{id}(id=${booking.id})}" class="btn btn-primary" th:if="${booking.status == 'CONFIRMED'}">
+                            <i class="fa-solid fa-ticket me-1"></i>View Ticket
+                        </a>
+                        
+                        <form th:action="@{/booking/cancel/{id}(id=${booking.id})}" method="post" th:if="${booking.status == 'CONFIRMED'}">
+                             <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                 Cancel Booking
+                             </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+<main class="main-content">
+<div class="container mt-5">
+    <div class="content-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Available Buses for <span th:text="${source}"></span> to <span th:text="${destination}"></span></h2>
+
+            <div class="col-md-3">
+                <select id="sort-select" class="form-select">
+                    <option value="price,asc" th:selected="${sort == 'price,asc'}">Price: Low to High</option>
+                    <option value="price,desc" th:selected="${sort == 'price,desc'}">Price: High to Low</option>
+                    <option value="departureTime,asc" th:selected="${sort == 'departureTime,asc'}">Departure: Earliest</option>
+                </select>
+            </div>
+        </div>
+
+        <div th:if="${schedules.isEmpty()}">
+            <div class="alert alert-warning">Sorry, is route ke liye koi bus available nahi hai.</div>
+        </div>
+        <div class="table-responsive" th:if="${!schedules.isEmpty()}">
+            <table class="table table-hover custom-table">
+                <thead>
+                <tr>
+                    <th>Bus Name</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Available Seats</th> <th>Price</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="schedule : ${schedules}">
+                    <td th:text="${schedule.bus.busName}"></td>
+                    <td th:text="${#temporals.format(schedule.departureTime, 'hh:mm a')}"></td>
+                    <td th:text="${#temporals.format(schedule.arrivalTime, 'hh:mm a')}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${schedule.availableSeats <= 10} ? 'bg-danger' : 'bg-success'"
+                              th:text="${schedule.availableSeats} + ' Seats Left'">
+                        </span>
+                    </td>
+                    <td th:text="'₹' + ${#numbers.formatDecimal(schedule.price, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td><a th:href="@{/book/{id}(id=${schedule.id})}" class="btn btn-primary btn-sm">Book Now</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <a href="/" class="btn btn-secondary mt-3">Back to Search</a>
+    </div>
+</div>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.getElementById('sort-select').addEventListener('change', function() {
+        const selectedSort = this.value;
+        const source = /*[[${source}]]*/ '';
+        const destination = /*[[${destination}]]*/ '';
+        
+        window.location.href = `/search?source=${source}&destination=${destination}&sort=${selectedSort}`;
+    });
+    /*]]>*/
+</script>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

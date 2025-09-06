@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="main-content">
+<div class="container my-5">
+    <div class="col-md-6 col-lg-5 mx-auto">
+        <div class="form-container">
+            <h2 class="text-center">Login Page</h2>
+            <div th:if="${param.error}" class="alert alert-danger">
+                Invalid email or password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
+            <form method="post" th:action="@{/login}">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="username" name="username" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <p class="mt-3 text-center">Account nahi hai? <a th:href="@{/register}">Register karein</a></p>
+        </div>
+    </div>
+</div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

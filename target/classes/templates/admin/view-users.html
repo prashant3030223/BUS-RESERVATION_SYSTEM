@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+<main class="main-content">
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2>All Registered Users</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover custom-table">
+
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Address</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}">
+                            <td>
+                                <img th:src="${user.profilePhotoUrl != null ? user.profilePhotoUrl : 'https://i.ibb.co/615GAfT/default-profile-picture.png'}"
+                                     alt="Photo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                            </td>
+                            <td th:text="${user.fullName}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td th:text="${user.mobile ?: 'N/A'}"></td>
+                            <td th:text="${user.address ?: 'N/A'}"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${user.role == 'ROLE_ADMIN'} ? 'bg-danger' : 'bg-info'"
+                                      th:text="${#strings.replace(user.role, 'ROLE_', '')}">
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

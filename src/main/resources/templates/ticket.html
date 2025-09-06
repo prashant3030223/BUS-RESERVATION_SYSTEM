@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container mt-5">
+    <div class="content-container">
+        <div class="text-center mb-4">
+            <h2>🎉 Booking Confirmed! 🎉</h2>
+            <p>Aapka ticket safaltapoorvak book ho gaya hai.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fa-solid fa-ticket me-2"></i>Your E-Ticket</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5>Passenger Details</h5>
+                        <div class="d-flex align-items-center mb-3">
+                            <img th:if="${booking.user.profilePhotoUrl}"
+                                 th:src="@{${booking.user.profilePhotoUrl}}"
+                                 class="img-fluid rounded-circle me-3"
+                                 style="width: 80px; height: 80px; object-fit: cover;"
+                                 alt="Passenger Photo">
+                            
+                            <div>
+                                <p class="mb-0"><strong>Name:</strong> <span th:text="${booking.user.fullName}"></span></p>
+                                <p class="mb-0" th:if="${booking.user.mobile}">
+                                    <strong>Phone:</strong> <span th:text="${booking.user.mobile}"></span>
+                                </p>
+                                <p class="mb-0" th:if="${booking.user.address}">
+                                    <strong>Address:</strong> <span th:text="${booking.user.address}"></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h5>Trip Details</h5>
+                        <p><strong>Bus:</strong> <span th:text="${booking.schedule.bus.busName} + ' (' + ${booking.schedule.bus.busNumber} + ')'"></span></p>
+                        <p><strong>Route:</strong> <span th:text="${booking.schedule.source} + ' to ' + ${booking.schedule.destination}"></span></p>
+                        <p><strong>Departure:</strong> <span th:text="${#temporals.format(booking.schedule.departureTime, 'dd-MMM-yyyy, hh:mm a')}"></span></p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <p><strong>Booking ID:</strong> <br><span class="fw-bold" th:text="${booking.id}"></span></p>
+                        <p><strong>Booking Date:</strong> <br><span th:text="${#temporals.format(booking.bookingDate, 'dd-MMM-yyyy')}"></span></p>
+                        <p><strong>Seats:</strong> <br><span class="badge bg-success fs-5" th:text="${booking.seatNumbers}"></span></p>
+                        <p><strong>Total Price:</strong> <br><span class="fs-4 fw-bold" th:text="'₹' + ${booking.totalPrice}"></span></p>
+                    </div>
+                </div>
+            </div>
+             <div class="card-footer text-muted text-center">
+                Please show this e-ticket during boarding. Happy Journey!
+            </div>
+        </div>
+        <div class="text-center mt-3">
+             <a th:href="@{/my-bookings}" class="btn btn-secondary">View All My Bookings</a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+
+</body>
+</html>

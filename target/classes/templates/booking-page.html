@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="main-content">
+<div class="container mt-5">
+    <div class="col-md-8 mx-auto">
+        <div class="form-container">
+            <h2>Select Your Seat(s)</h2>
+            <div class="card bg-dark text-white mb-4">
+                 <div class="card-body">
+                    <h5 class="card-title" th:text="${schedule.bus.busName}">Bus Name</h5>
+                    <p class="card-text"><strong>Route:</strong> <b th:text="${schedule.source}"></b> To <b th:text="${schedule.destination}"></b></p>
+                </div>
+            </div>
+            
+            <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <div class="seat-map-container mb-3">
+                <div id="seat-map"></div>
+                <ul class="seat-legend">
+                    <li><div class="seat available"></div> Available</li>
+                    <li><div class="seat selected"></div> Selected</li>
+                    <li><div class="seat booked"></div> Booked</li>
+                </ul>
+            </div>
+            
+            <div class="text-center mb-4">
+                <h4>Total Price: ₹<span id="total-price">0.00</span></h4>
+            </div>
+
+            <form id="bookingForm" th:action="@{/book/confirm}" method="post">
+                <input type="hidden" name="scheduleId" th:value="${schedule.id}" />
+                <input type="hidden" name="seatNumbers" id="seatNumbers" required>
+                <button type="submit" class="btn btn-primary w-100">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+</div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        const totalSeats =  30;
+        const bookedSeats = new Set();
+        const pricePerSeat = 550.0;
+
+        const seatMap = document.getElementById('seat-map');
+        const seatNumbersInput = document.getElementById('seatNumbers');
+        const totalPriceDisplay = document.getElementById('total-price');
+        const bookingForm = document.getElementById('bookingForm');
+        const errorMessageDiv = document.getElementById('error-message');
+
+        const selectedSeats = new Set();
+        let rows = Math.ceil(totalSeats / 4);
+
+        for (let i = 0; i < rows; i++) {
+            const row = document.createElement('div');
+            row.classList.add('seat-row');
+            for (let j = 1; j <= 5; j++) {
+                if (j === 3) { 
+                    const aisle = document.createElement('div');
+                    aisle.classList.add('seat-label');
+                    row.appendChild(aisle);
+                    continue;
+                }
+                let seatNumber = i * 4 + (j > 3 ? j - 1 : j);
+                if (seatNumber > totalSeats) continue;
+
+                const seatId = String.fromCharCode(65 + i) + (j > 3 ? j - 1 : j);
+
+                const seat = document.createElement('div');
+                seat.classList.add('seat');
+                seat.innerText = seatId;
+                seat.dataset.seatId = seatId;
+
+                if (bookedSeats.has(seatId)) {
+                    seat.classList.add('booked');
+                } else {
+                    seat.classList.add('available');
+                    seat.addEventListener('click', () => {
+                        if (seat.classList.contains('selected')) {
+                            seat.classList.remove('selected');
+                            selectedSeats.delete(seatId);
+                        } else {
+                            seat.classList.add('selected');
+                            selectedSeats.add(seatId);
+                        }
+                        updateSelectedSeatsAndPrice();
+                    });
+                }
+                row.appendChild(seat);
+            }
+            seatMap.appendChild(row);
+        }
+        
+        function updateSelectedSeatsAndPrice() {
+            const seatsArray = Array.from(selectedSeats);
+            seatNumbersInput.value = seatsArray.join(',');
+            
+            const totalPrice = selectedSeats.size * pricePerSeat;
+            totalPriceDisplay.textContent = totalPrice.toFixed(2);
+        }
+
+
+        bookingForm.addEventListener('submit', function(event) {
+            if (seatNumbersInput.value.trim() === '') {
+                event.preventDefault(); 
+                errorMessageDiv.textContent = 'Please select at least one seat before booking.';
+                errorMessageDiv.style.display = 'block';
+            } else {
+                errorMessageDiv.style.display = 'none';
+            }
+        });
+    });
+
+</script>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

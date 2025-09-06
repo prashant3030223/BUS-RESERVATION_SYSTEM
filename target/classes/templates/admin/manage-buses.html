@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+<div class="container mt-5">
+    <div class="accordion mb-4" id="addBusAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                    Click to Add a New Bus
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#addBusAccordion">
+                <div class="accordion-body form-container">
+                    <form th:action="@{/admin/buses/add}" th:object="${bus}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Bus Name</label>
+                            <input type="text" th:field="*{busName}" class="form-control" />
+                            <span class="text-danger" th:if="${#fields.hasErrors('busName')}" th:errors="*{busName}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bus Number</label>
+                            <input type="text" th:field="*{busNumber}" class="form-control" />
+                            <span class="text-danger" th:if="${#fields.hasErrors('busNumber')}" th:errors="*{busNumber}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Total Seats</label>
+                            <input type="number" th:field="*{totalSeats}" class="form-control" />
+                            <span class="text-danger" th:if="${#fields.hasErrors('totalSeats')}" th:errors="*{totalSeats}"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Bus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h4>Existing Buses</h4></div>
+        <div class="card-body">
+            <table class="table table-hover custom-table">
+                <thead><tr><th>ID</th><th>Name</th><th>Number</th><th>Seats</th><th>Actions</th></tr></thead>
+                <tbody>
+                    <tr th:each="b : ${buses}">
+                        <td th:text="${b.id}"></td>
+                        <td th:text="${b.busName}"></td>
+                        <td th:text="${b.busNumber}"></td>
+                        <td th:text="${b.totalSeats}"></td>
+                        <td>
+                            <a th:href="@{/admin/buses/edit/{id}(id=${b.id})}" class="btn btn-warning btn-sm"><i class="fa-solid fa-pencil"></i></a>
+                            <a th:href="@{/admin/buses/delete/{id}(id=${b.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

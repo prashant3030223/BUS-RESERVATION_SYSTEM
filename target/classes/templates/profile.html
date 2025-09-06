@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header-css}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="main-content">
+<div class="container my-5">
+    <div class="col-md-8 mx-auto">
+        <div class="content-container">
+            <h2 class="mb-4 text-center">My Account</h2>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details-pane" type="button">Profile Details</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-pane" type="button">Change Password</button>
+                </li>
+            </ul>
+
+            <div class="tab-content pt-4">
+                <div class="tab-pane fade show active" id="details-pane" role="tabpanel">
+                    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img th:src="${user.profilePhotoUrl != null ? user.profilePhotoUrl : 'https://i.ibb.co/615GAfT/default-profile-picture.png'}"
+                                 class="img-fluid rounded-circle mb-3" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 th:text="${user.fullName}"></h5>
+                            <p class="text-muted" th:text="${user.email}"></p>
+                        </div>
+                        <div class="col-md-8">
+                            <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+                                <div class="mb-3"><label class="form-label">Full Name</label><input type="text" name="fullName" class="form-control" th:value="${user.fullName}" required></div>
+                                <div class="mb-3"><label class="form-label">Mobile Number</label><input type="tel" name="mobile" class="form-control" th:value="${user.mobile}"></div>
+                                <div class="mb-3"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="3" th:text="${user.address}"></textarea></div>
+                                <div class="mb-3"><label class="form-label">Update Profile Photo</label><input type="file" name="profileImage" class="form-control"></div>
+                                <button type="submit" class="btn btn-primary w-100">Update Details</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="password-pane" role="tabpanel">
+                    <h4>Change Your Password</h4>
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+                    <form th:action="@{/profile/change-password}" method="post" th:object="${passwordChangeDto}">
+                        <div class="mb-3"><label class="form-label">Old Password</label><input type="password" class="form-control" th:field="*{oldPassword}" required></div>
+                        <div class="mb-3"><label class="form-label">New Password</label><input type="password" class="form-control" th:field="*{newPassword}" required></div>
+                        <div class="mb-3"><label class="form-label">Confirm New Password</label><input type="password" class="form-control" th:field="*{confirmPassword}" required></div>
+                        <div th:if="${passwordErrors}"><p th:each="err : ${passwordErrors.allErrors()}" th:text="${err.defaultMessage}" class="text-danger"></p></div>
+                        <button type="submit" class="btn btn-primary w-100">Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
