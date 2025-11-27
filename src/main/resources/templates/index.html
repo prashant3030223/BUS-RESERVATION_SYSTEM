@@ -1,71 +1,219 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>Tour&travels - Your Journey Partner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TourNtravels - Your Journey Partner</title>
+    <meta name="description"
+        content="Book your bus tickets with TourNtravels. Experience premium comfort, AI-powered routing, and seamless booking for your journey across India.">
+    <meta name="keywords"
+        content="TourNtravels, bus booking, online bus ticket, luxury bus, travel, india bus, sleeper bus, volvo bus">
+    <meta name="author" content="TourNtravels">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TourNtravels - Your Journey Partner">
+    <meta property="og:description"
+        content="Book your bus tickets with TourNtravels. Experience premium comfort, AI-powered routing, and seamless booking.">
+    <meta property="og:image" content="/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="TourNtravels - Your Journey Partner">
+    <meta property="twitter:description"
+        content="Book your bus tickets with TourNtravels. Experience premium comfort, AI-powered routing, and seamless booking.">
+    <meta property="twitter:image" content="/images/og-image.jpg">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tour&Travels - Your Journey Partner</title>
-        
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-        
-        <link rel="stylesheet" th:href="@{/css/style-v2.css}">
-        <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/theme-toggle.css}">
+    <link rel="stylesheet" th:href="@{/css/enhancements.css}">
+    <link rel="stylesheet" th:href="@{/css/visibility-fixes.css?v=8}">
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
 </head>
+
 <body>
 
     <div th:replace="~{fragments/header :: navbar}"></div>
-    
+
     <main class="main-content">
         <div class="hero-section">
-            <div class="hero-content px-3">
-                <h1>Travel with Confidence</h1>
-                <p>Your journey begins here. Find the best bus for your next adventure.</p>
-                
-                <div class="container" style="max-width: 700px;">
-                    <div class="form-container">
-                        <form action="/search" method="get" class="row g-2 g-md-3 align-items-center">
-                            <div class="col-12 col-md-5">
-                                <input type="text" class="form-control form-control-lg" placeholder="Kahan Se?" name="source" required>
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-10 mx-auto text-center hero-content">
+                        <h1 class="display-3 fw-bold animate__animated animate__fadeInDown mb-4">
+                            Travel with <span class="text-gradient">Confidence</span>
+                        </h1>
+                        <p class="lead mb-5 animate__animated animate__fadeInUp animate__delay-1s text-muted-light">
+                            Experience the future of bus travel. Premium comfort, AI-powered routing, and seamless
+                            booking.
+                        </p>
+
+                        <div
+                            class="search-widget glass-card animate__animated animate__fadeInUp animate__delay-1s mx-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box me-3">
+                                        <i class="fas fa-search text-white"></i>
+                                    </div>
+                                    <span class="h5 mb-0 fw-bold text-uppercase ls-1"
+                                        style="font-family: 'Rajdhani', sans-serif;">
+                                        Find Your Journey
+                                    </span>
+                                </div>
+                                <span class="badge bg-gradient-primary rounded-pill px-3 py-2 shadow-sm">
+                                    <i class="fas fa-sparkles me-1"></i> AI Smart Search
+                                </span>
                             </div>
-                            <div class="col-12 col-md-5">
-                                <input type="text" class="form-control form-control-lg" placeholder="Kahan Tak?" name="destination" required>
-                            </div>
-                            <div class="col-12 col-md-2">
-                                <button type="submit" class="btn btn-primary btn-lg w-100">Search</button>
-                            </div>
+
+                            <form action="/search" method="get" class="search-form-row p-2">
+                                <div class="d-flex flex-column flex-md-row align-items-center w-100 gap-3">
+                                    <div class="input-wrapper flex-grow-1 w-100">
+                                        <label class="small text-muted-light ms-2 mb-1">From</label>
+                                        <div class="d-flex align-items-center input-group-custom p-1">
+                                            <input type="text"
+                                                class="form-control border-0 bg-transparent shadow-none ps-3"
+                                                id="source" placeholder="City or Station" name="source" list="cityList"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" class="btn-swap d-none d-md-flex mt-4"
+                                        onclick="swapLocations()">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </button>
+
+                                    <div class="input-wrapper flex-grow-1 w-100">
+                                        <label class="small text-muted-light ms-2 mb-1">To</label>
+                                        <div class="d-flex align-items-center input-group-custom p-1">
+                                            <input type="text"
+                                                class="form-control border-0 bg-transparent shadow-none ps-3"
+                                                id="destination" placeholder="City or Station" name="destination"
+                                                list="cityList" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-wrapper flex-grow-1 w-100">
+                                        <label class="small text-muted-light ms-2 mb-1">Date</label>
+                                        <div class="d-flex align-items-center input-group-custom p-1">
+                                            <input type="date"
+                                                class="form-control border-0 bg-transparent shadow-none ps-3"
+                                                placeholder="Date" name="travelDate" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <button type="submit" class="btn btn-search">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                        </div>
                         </form>
+                        <datalist id="cityList">
+                            <option value="Delhi">
+                            <option value="Mumbai">
+                            <option value="Bangalore">
+                            <option value="Chennai">
+                            <option value="Kolkata">
+                            <option value="Hyderabad">
+                            <option value="Pune">
+                            <option value="Jaipur">
+                            <option value="Lucknow">
+                            <option value="Kanpur">
+                            <option value="Agra">
+                            <option value="Varanasi">
+                            <option value="Ahmedabad">
+                            <option value="Surat">
+                            <option value="Indore">
+                            <option value="Bhopal">
+                            <option value="Patna">
+                            <option value="Ranchi">
+                            <option value="Chandigarh">
+                            <option value="Ludhiana">
+                            <option value="Amritsar">
+                            <option value="Dehradun">
+                            <option value="Haridwar">
+                            <option value="Aligarh">
+                            <option value="Mathura">
+                        </datalist>
+                        <script>
+                            function swapLocations() {
+                                const source = document.getElementById('source');
+                                const dest = document.getElementById('destination');
+                                const temp = source.value;
+                                source.value = dest.value;
+                                dest.value = temp;
+                            }
+                        </script>
                     </div>
                 </div>
             </div>
-            
-    
-            <div class="road">
-                <div class="road-lines"></div>
-    
-                <div id="traffic-light">
-                    <div class="light red"></div>
-                    <div class="light yellow"></div>
-                    <div class="light green"></div>
+        </div>
+
+        <!-- Animated Background Elements -->
+        <div class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden"
+            style="z-index: -1; pointer-events: none;">
+            <div class="position-absolute bg-primary rounded-circle"
+                style="width: 300px; height: 300px; top: -100px; left: -100px; filter: blur(80px); opacity: 0.2;">
+            </div>
+            <div class="position-absolute bg-secondary rounded-circle"
+                style="width: 400px; height: 400px; bottom: -150px; right: -100px; filter: blur(100px); opacity: 0.2;">
+            </div>
+        </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card p-4 h-100 text-center hover-effect">
+                        <div class="feature-icon bg-primary-soft">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Safe & Secure</h4>
+                        <p class="text-muted-light">Verified buses and secure payments for your peace of mind.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-4 h-100 text-center hover-effect">
+                        <div class="feature-icon bg-secondary-soft">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h4>On Time</h4>
+                        <p class="text-muted-light">Live tracking and punctuality guarantee on all routes.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="glass-card p-4 h-100 text-center hover-effect">
+                        <div class="feature-icon bg-danger-soft">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4>24/7 Support</h4>
+                        <p class="text-muted-light">We are here to help you anytime, anywhere.</p>
+                    </div>
                 </div>
             </div>
-            <img id="moving-bus" th:src="@{/images/bus.png}" alt="moving bus">        
         </div>
-       
     </main>
-    
+
     <div th:replace="~{fragments/footer :: footer}"></div>
     <div th:replace="~{fragments/footer :: scripts}"></div>
-    
-    </body>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+
+</body>
+
 </html>

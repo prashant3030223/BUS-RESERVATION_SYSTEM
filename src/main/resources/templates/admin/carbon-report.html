@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emission Report - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Include Sidebar CSS -->
+    <th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar-css}"></th:block>
+    <!-- Admin Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme-toggle.css}">
+</head>
+
+<body>
+    <!-- Admin Sidebar Fragment -->
+    <div th:replace="~{fragments/admin-sidebar :: admin-sidebar}"></div>
+
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle-btn" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome-text">
+                <h1>Carbon Emission Report</h1>
+                <p>Environmental impact analysis across all bookings</p>
+            </div>
+            <div class="d-flex gap-3">
+                <a href="/admin/dashboard" class="btn btn-outline-primary rounded-pill px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid mb-4">
+            <!-- Total CO2 Saved -->
+            <div class="glass-card stat-card">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value"
+                        th:text="${#numbers.formatDecimal(totalCO2Saved, 0, 'COMMA', 2, 'POINT')} + ' kg'">0 kg</h3>
+                    <p class="stat-label">Total CO₂ Saved</p>
+                </div>
+            </div>
+
+            <!-- Bus Emissions -->
+            <div class="glass-card stat-card">
+                <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                    <i class="fas fa-bus"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value"
+                        th:text="${#numbers.formatDecimal(totalBusEmissions, 0, 'COMMA', 2, 'POINT')} + ' kg'">0 kg</h3>
+                    <p class="stat-label">Bus Emissions</p>
+                </div>
+            </div>
+
+            <!-- Total Distance -->
+            <div class="glass-card stat-card">
+                <div class="stat-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">
+                    <i class="fas fa-route"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value"
+                        th:text="${#numbers.formatDecimal(totalDistance, 0, 'COMMA', 0, 'POINT')} + ' km'">0 km</h3>
+                    <p class="stat-label">Total Distance</p>
+                </div>
+            </div>
+
+            <!-- Total Trips -->
+            <div class="glass-card stat-card">
+                <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="stat-value" th:text="${totalTrips}">0</h3>
+                    <p class="stat-label">Eco-Friendly Trips</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Environmental Impact Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stat-icon me-3"
+                            style="background: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 2rem;">
+                            🌳
+                        </div>
+                        <div>
+                            <h5 class="mb-1" style="color: var(--text-primary);">Trees Equivalent</h5>
+                            <p class="text-muted small mb-0">Annual CO₂ absorption capacity</p>
+                        </div>
+                    </div>
+                    <h2 class="text-success mb-0"
+                        th:text="${#numbers.formatDecimal(treesEquivalent, 0, 'COMMA', 1, 'POINT')} + ' trees'">0 trees
+                    </h2>
+                    <p class="text-muted small mt-2">Based on 21kg CO₂ absorption per tree annually</p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stat-icon me-3"
+                            style="background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 2rem;">
+                            🚗
+                        </div>
+                        <div>
+                            <h5 class="mb-1" style="color: var(--text-primary);">Car Kilometers Avoided</h5>
+                            <p class="text-muted small mb-0">Equivalent distance not driven by car</p>
+                        </div>
+                    </div>
+                    <h2 class="text-danger mb-0"
+                        th:text="${#numbers.formatDecimal(carKmEquivalent, 0, 'COMMA', 0, 'POINT')} + ' km'">0 km</h2>
+                    <p class="text-muted small mt-2">Based on 0.192kg CO₂ per km for cars</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emission Comparison Chart -->
+        <div class="glass-card mb-4">
+            <h3 class="chart-title mb-4" style="color: var(--text-primary);">
+                <i class="fas fa-chart-bar me-2"></i>Emission Comparison
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="emissionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Impact Metrics -->
+        <div class="glass-card">
+            <h3 class="chart-title mb-4" style="color: var(--text-primary);">
+                <i class="fas fa-info-circle me-2"></i>Impact Metrics
+            </h3>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="p-3 rounded" style="background: var(--bg-secondary);">
+                        <h6 class="text-muted mb-2">Emission Reduction Rate</h6>
+                        <h4 class="text-success mb-0">85%</h4>
+                        <small class="text-muted">vs. individual car travel</small>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="p-3 rounded" style="background: var(--bg-secondary);">
+                        <h6 class="text-muted mb-2">Average CO₂ per Trip</h6>
+                        <h4 class="text-primary mb-0"
+                            th:text="${totalTrips > 0 ? #numbers.formatDecimal(totalCO2Saved / totalTrips, 0, 'COMMA', 2, 'POINT') + ' kg' : '0 kg'}">
+                            0 kg</h4>
+                        <small class="text-muted">saved per booking</small>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="p-3 rounded" style="background: var(--bg-secondary);">
+                        <h6 class="text-muted mb-2">Average Distance</h6>
+                        <h4 class="text-warning mb-0"
+                            th:text="${totalTrips > 0 ? #numbers.formatDecimal(totalDistance / totalTrips, 0, 'COMMA', 0, 'POINT') + ' km' : '0 km'}">
+                            0 km</h4>
+                        <small class="text-muted">per trip</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-success mt-4" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Great Impact!</strong> Your bus service has helped save the equivalent of
+                <strong th:text="${#numbers.formatDecimal(treesEquivalent, 0, 'COMMA', 1, 'POINT')}">0</strong> trees'
+                annual CO₂ absorption capacity.
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const totalCO2Saved = /*[[${totalCO2Saved}]]*/ 0;
+        const totalBusEmissions = /*[[${totalBusEmissions}]]*/ 0;
+        const carEmissions = totalCO2Saved + totalBusEmissions;
+        /*]]>*/
+
+        const ctx = document.getElementById('emissionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Car Travel', 'Bus Travel', 'CO₂ Saved'],
+                datasets: [{
+                    label: 'CO₂ Emissions (kg)',
+                    data: [carEmissions, totalBusEmissions, totalCO2Saved],
+                    backgroundColor: [
+                        'rgba(239, 68, 68, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(16, 185, 129, 0.7)'
+                    ],
+                    borderColor: [
+                        '#ef4444',
+                        '#3b82f6',
+                        '#10b981'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

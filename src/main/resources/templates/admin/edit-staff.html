@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Staff - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Include Sidebar CSS -->
+    <th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar-css}"></th:block>
+    <!-- Admin Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme-toggle.css}">
+</head>
+
+<body>
+    <!-- Admin Sidebar Fragment -->
+    <div th:replace="~{fragments/admin-sidebar :: admin-sidebar}"></div>
+
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle-btn" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome-text">
+                <h1>Edit Staff Member</h1>
+                <p>Update staff details and status</p>
+            </div>
+            <div class="d-flex gap-3">
+                <a th:href="@{/admin/staff}" class="btn btn-outline-light rounded-pill px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                </a>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="glass-card" style="max-width: 800px; margin: 0 auto;">
+            <form th:action="@{/admin/staff/edit/{id}(id=${staff.id})}" method="post" th:object="${staff}">
+                <div class="row g-4">
+                    <div class="col-md-12">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Full Name</label>
+                        <input type="text" class="form-control" th:field="*{fullName}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Email</label>
+                        <input type="email" class="form-control" th:field="*{email}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Mobile</label>
+                        <input type="tel" class="form-control" th:field="*{mobile}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Role</label>
+                        <select class="form-select" th:field="*{role}" required>
+                            <option value="Driver">Driver</option>
+                            <option value="Conductor">Conductor</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Support">Support Staff</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">License Number</label>
+                        <input type="text" class="form-control" th:field="*{licenseNumber}" placeholder="For Drivers">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Status</label>
+                        <select class="form-select" th:field="*{status}" required>
+                            <option value="Active">Active</option>
+                            <option value="On Leave">On Leave</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary rounded-pill px-5 w-100">
+                            Update Staff Member
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+    <script>
+    </script>
+</body>
+
+</html>

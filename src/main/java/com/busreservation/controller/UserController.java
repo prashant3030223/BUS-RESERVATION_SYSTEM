@@ -26,6 +26,9 @@ public class UserController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private com.busreservation.service.PassengerService passengerService;
+
     @GetMapping("/profile")
     public String viewProfile(Model model, Authentication authentication) {
         if (authentication == null) {
@@ -33,22 +36,60 @@ public class UserController {
         }
         User currentUser = userService.findByEmail(authentication.getName());
         model.addAttribute("user", currentUser);
-        
+        model.addAttribute("passengers", passengerService.getPassengersByUser(currentUser));
+
         // YEH LINE ZAROORI HAI taaki "Change Password" form kaam kare
         if (!model.containsAttribute("passwordChangeDto")) {
             model.addAttribute("passwordChangeDto", new PasswordChangeDto());
         }
-        
+
         return "profile";
+    }
+
+    @PostMapping("/profile/passenger/add")
+    public String addPassenger(@RequestParam String name,
+            @RequestParam int age,
+            @RequestParam String gender,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = userService.findByEmail(authentication.getName());
+
+        com.busreservation.model.Passenger passenger = new com.busreservation.model.Passenger();
+        passenger.setName(name);
+        passenger.setAge(age);
+        passenger.setGender(gender);
+        passenger.setUser(currentUser);
+
+        passengerService.savePassenger(passenger);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Passenger added successfully!");
+        return "redirect:/profile?tab=passengers";
+    }
+
+    @PostMapping("/profile/passenger/delete")
+    public String deletePassenger(@RequestParam Long id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = userService.findByEmail(authentication.getName());
+        com.busreservation.model.Passenger passenger = passengerService.getPassengerById(id);
+
+        if (passenger != null && passenger.getUser().getId().equals(currentUser.getId())) {
+            passengerService.deletePassenger(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Passenger deleted successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Unauthorized action.");
+        }
+
+        return "redirect:/profile?tab=passengers";
     }
 
     @PostMapping("/profile/update")
     public String updateProfile(@RequestParam String fullName,
-                                @RequestParam String mobile,
-                                @RequestParam String address,
-                                @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-                                Authentication authentication,
-                                RedirectAttributes redirectAttributes) {
+            @RequestParam String mobile,
+            @RequestParam String address,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
         if (authentication == null) {
             return "redirect:/login";
         }
@@ -61,39 +102,42 @@ public class UserController {
                 String photoUrl = fileStorageService.storeFile(profileImage);
                 userService.updateProfilePhoto(email, photoUrl);
             } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Could not upload profile image: " + e.getMessage());
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Could not upload profile image: " + e.getMessage());
                 return "redirect:/profile";
             }
         }
-        
+
         redirectAttributes.addFlashAttribute("successMessage", "Your profile has been updated successfully!");
         return "redirect:/profile";
     }
-    
+
     @PostMapping("/profile/change-password")
     public String changePassword(@ModelAttribute("passwordChangeDto") @Valid PasswordChangeDto passwordChangeDto,
-                                 BindingResult bindingResult,
-                                 Authentication authentication,
-                                 RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
 
         if (!passwordChangeDto.getNewPassword().equals(passwordChangeDto.getConfirmPassword())) {
             bindingResult.rejectValue("confirmPassword", "password.mismatch", "Passwords do not match.");
         }
-        
+
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.passwordChangeDto", bindingResult);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.passwordChangeDto",
+                    bindingResult);
             redirectAttributes.addFlashAttribute("passwordChangeDto", passwordChangeDto);
             return "redirect:/profile?tab=password";
         }
 
-        boolean isChanged = userService.changePassword(authentication.getName(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
+        boolean isChanged = userService.changePassword(authentication.getName(), passwordChangeDto.getOldPassword(),
+                passwordChangeDto.getNewPassword());
 
         if (isChanged) {
             redirectAttributes.addFlashAttribute("successMessage", "Password updated successfully!");
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Incorrect old password.");
         }
-        
+
         return "redirect:/profile?tab=password";
     }
 }

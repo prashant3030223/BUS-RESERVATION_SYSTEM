@@ -11,10 +11,17 @@ import java.time.LocalDateTime;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private BusRepository busRepository;
-    @Autowired private ScheduleRepository scheduleRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BusRepository busRepository;
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private StaffRepository staffRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -52,9 +59,34 @@ public class DataLoader implements CommandLineRunner {
             schedule1.setDepartureTime(LocalDateTime.now().plusHours(2));
             schedule1.setArrivalTime(LocalDateTime.now().plusHours(5));
             schedule1.setPrice(550.00);
+            schedule1.setAvailableSeats(bus1.getTotalSeats());
             scheduleRepository.save(schedule1);
-            
+
             System.out.println("Default users and sample data loaded!");
+        }
+
+        if (staffRepository.count() == 0) {
+            Staff driver1 = new Staff(null, "Ramesh Kumar", "ramesh.k@bus.com", "9876543210", "Driver", "DL-2023-12345",
+                    "Active", null);
+            staffRepository.save(driver1);
+
+            Staff driver2 = new Staff(null, "Suresh Singh", "suresh.s@bus.com", "9876543211", "Driver", "DL-2022-67890",
+                    "On Leave", null);
+            staffRepository.save(driver2);
+
+            Staff conductor1 = new Staff(null, "Mahesh Yadav", "mahesh.y@bus.com", "9876543212", "Conductor", null,
+                    "Active", null);
+            staffRepository.save(conductor1);
+
+            Staff conductor2 = new Staff(null, "Rajesh Gupta", "rajesh.g@bus.com", "9876543213", "Conductor", null,
+                    "Active", null);
+            staffRepository.save(conductor2);
+
+            Staff manager = new Staff(null, "Vikram Malhotra", "vikram.m@bus.com", "9876543214", "Manager", null,
+                    "Active", null);
+            staffRepository.save(manager);
+
+            System.out.println("Sample staff data loaded!");
         }
     }
 }

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Include Sidebar CSS -->
+    <th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar-css}"></th:block>
+    <!-- Admin Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme-toggle.css}">
+</head>
+
+<body>
+    <!-- Admin Sidebar Fragment -->
+    <div th:replace="~{fragments/admin-sidebar :: admin-sidebar}"></div>
+
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle-btn" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome-text">
+                <h1>System Settings</h1>
+                <p>Configure application-wide settings and preferences</p>
+            </div>
+            <div class="d-flex gap-3">
+                <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal"
+                    data-bs-target="#addSettingModal">
+                    <i class="fas fa-plus me-2"></i>Add Setting
+                </button>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Settings by Category -->
+        <form th:action="@{/admin/settings/update}" method="post">
+            <div th:each="entry : ${settingsByCategory}" class="mb-4">
+                <div class="glass-card">
+                    <div class="chart-header mb-4">
+                        <h3 class="chart-title">
+                            <i class="fas fa-cog me-2"></i>
+                            <span th:text="${entry.key}">GENERAL</span> Settings
+                        </h3>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6" th:each="setting : ${entry.value}">
+                            <div class="mb-3">
+                                <label class="form-label text-secondary small text-uppercase fw-bold">
+                                    <span th:text="${setting.settingKey}">SETTING_KEY</span>
+                                </label>
+                                <input type="text" class="form-control" th:name="'setting_' + ${setting.settingKey}"
+                                    th:value="${setting.settingValue}" th:placeholder="${setting.description}">
+                                <small class="text-secondary" th:text="${setting.description}">Description</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4" th:if="${!#maps.isEmpty(settingsByCategory)}">
+                <button type="submit" class="btn btn-primary rounded-pill px-5 py-3">
+                    <i class="fas fa-save me-2"></i>Save All Settings
+                </button>
+            </div>
+        </form>
+
+        <div th:if="${#maps.isEmpty(settingsByCategory)}" class="glass-card text-center py-5">
+            <i class="fas fa-cog fa-4x mb-3 opacity-50"></i>
+            <h4>No Settings Configured</h4>
+            <p class="text-secondary">Add your first system setting to get started</p>
+        </div>
+    </div>
+
+    <!-- Add Setting Modal -->
+    <div class="modal fade" id="addSettingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title text-white">Add New Setting</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/admin/settings/add}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">Setting Key</label>
+                            <input type="text" class="form-control" name="settingKey" required
+                                placeholder="e.g., MAX_BOOKING_DAYS">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">Setting Value</label>
+                            <input type="text" class="form-control" name="settingValue" required placeholder="e.g., 30">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">Description</label>
+                            <textarea class="form-control" name="description" rows="2"
+                                placeholder="Brief description of this setting"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">Category</label>
+                            <select class="form-select" name="category" required>
+                                <option value="GENERAL">General</option>
+                                <option value="BOOKING">Booking</option>
+                                <option value="PAYMENT">Payment</option>
+                                <option value="NOTIFICATION">Notification</option>
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary rounded-pill">Add Setting</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+
+</html>

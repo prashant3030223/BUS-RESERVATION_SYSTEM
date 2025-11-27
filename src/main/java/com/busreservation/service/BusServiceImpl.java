@@ -20,6 +20,11 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
+    public List<Bus> findAllBuses() {
+        return busRepository.findAll();
+    }
+
+    @Override
     public void saveBus(Bus bus) {
         busRepository.save(bus);
     }
@@ -30,10 +35,20 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
+    public Bus findBusById(Long id) {
+        return busRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public void deleteBusById(Long id) {
         busRepository.deleteById(id);
     }
-    
+
+    @Override
+    public void deleteBus(Long id) {
+        busRepository.deleteById(id);
+    }
+
     @Override
     public long countBuses() {
         return busRepository.count();

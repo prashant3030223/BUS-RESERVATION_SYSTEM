@@ -17,18 +17,59 @@ public class Bus {
     private String busNumber;
     @Min(value = 10, message = "Total seats must be at least 10")
     private int totalSeats;
+
+    @Column(nullable = false)
+    private String busType = "AC Seater"; // Default value
+
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL)
     private List<Schedule> schedules;
-    
+
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getBusName() { return busName; }
-    public void setBusName(String busName) { this.busName = busName; }
-    public String getBusNumber() { return busNumber; }
-    public void setBusNumber(String busNumber) { this.busNumber = busNumber; }
-    public int getTotalSeats() { return totalSeats; }
-    public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }
-    public List<Schedule> getSchedules() { return schedules; }
-    public void setSchedules(List<Schedule> schedules) { this.schedules = schedules; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBusName() {
+        return busName;
+    }
+
+    public void setBusName(String busName) {
+        this.busName = busName;
+    }
+
+    public String getBusNumber() {
+        return busNumber;
+    }
+
+    public void setBusNumber(String busNumber) {
+        this.busNumber = busNumber;
+    }
+
+    public int getTotalSeats() {
+        return totalSeats;
+    }
+
+    public void setTotalSeats(int totalSeats) {
+        this.totalSeats = totalSeats;
+    }
+
+    public String getBusType() {
+        return busType;
+    }
+
+    public void setBusType(String busType) {
+        this.busType = busType;
+    }
+
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
 }

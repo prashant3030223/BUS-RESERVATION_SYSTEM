@@ -1,64 +1,258 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/header :: header-css}"></head>
+
 <body>
-<div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
-<main class="main-content">
-<div class="container my-5">
-    <div class="col-md-8 mx-auto">
-        <div class="content-container">
-            <h2 class="mb-4 text-center">My Account</h2>
+    <main class="main-content">
+        <div class="container my-5">
+            <div class="col-lg-10 mx-auto">
+                <div class="content-container glass-card p-0 overflow-hidden">
+                    <div class="row g-0">
+                        <!-- Sidebar / Header Section -->
+                        <div class="col-md-4 bg-dark bg-opacity-50 p-4 text-center border-end border-secondary"
+                            style="border-color: rgba(255,255,255,0.1) !important;">
+                            <div class="mb-4">
+                                <div class="position-relative d-inline-block">
+                                    <img th:src="${user.profilePhotoUrl != null ? user.profilePhotoUrl : 'https://i.ibb.co/615GAfT/default-profile-picture.png'}"
+                                        class="rounded-circle mb-3 shadow-lg" alt="Profile Picture"
+                                        style="width: 150px; height: 150px; object-fit: cover; border: 4px solid rgba(255,255,255,0.1);">
+                                    <div class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-dark p-2"
+                                        style="width: 20px; height: 20px;"></div>
+                                </div>
+                                <h3 class="fw-bold text-white mb-1" th:text="${user.fullName}">User Name</h3>
+                                <p class="text-muted-light" th:text="${user.email}">user@example.com</p>
+                            </div>
 
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details-pane" type="button">Profile Details</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-pane" type="button">Change Password</button>
-                </li>
-            </ul>
-
-            <div class="tab-content pt-4">
-                <div class="tab-pane fade show active" id="details-pane" role="tabpanel">
-                    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <img th:src="${user.profilePhotoUrl != null ? user.profilePhotoUrl : 'https://i.ibb.co/615GAfT/default-profile-picture.png'}"
-                                 class="img-fluid rounded-circle mb-3" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
-                            <h5 th:text="${user.fullName}"></h5>
-                            <p class="text-muted" th:text="${user.email}"></p>
+                            <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist"
+                                aria-orientation="vertical">
+                                <button class="nav-link active text-start mb-2" id="details-tab" data-bs-toggle="pill"
+                                    data-bs-target="#details-pane" type="button" role="tab">
+                                    <i class="fas fa-user-circle me-2"></i> Profile Details
+                                </button>
+                                <button class="nav-link text-start" id="password-tab" data-bs-toggle="pill"
+                                    data-bs-target="#password-pane" type="button" role="tab">
+                                    <i class="fas fa-lock me-2"></i> Change Password
+                                </button>
+                                <button class="nav-link text-start" id="passengers-tab" data-bs-toggle="pill"
+                                    data-bs-target="#passengers-pane" type="button" role="tab">
+                                    <i class="fas fa-users me-2"></i> Saved Passengers
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-md-8">
-                            <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
-                                <div class="mb-3"><label class="form-label">Full Name</label><input type="text" name="fullName" class="form-control" th:value="${user.fullName}" required></div>
-                                <div class="mb-3"><label class="form-label">Mobile Number</label><input type="tel" name="mobile" class="form-control" th:value="${user.mobile}"></div>
-                                <div class="mb-3"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="3" th:text="${user.address}"></textarea></div>
-                                <div class="mb-3"><label class="form-label">Update Profile Photo</label><input type="file" name="profileImage" class="form-control"></div>
-                                <button type="submit" class="btn btn-primary w-100">Update Details</button>
-                            </form>
+
+                        <!-- Content Section -->
+                        <div class="col-md-8 p-4 p-md-5">
+                            <div class="tab-content" id="v-pills-tabContent">
+                                <!-- Profile Details Tab -->
+                                <div class="tab-pane fade show active" id="details-pane" role="tabpanel">
+                                    <h4 class="mb-4 text-white fw-bold">Profile <span
+                                            class="text-gradient">Settings</span></h4>
+
+                                    <div th:if="${successMessage}"
+                                        class="alert alert-success bg-success bg-opacity-10 text-success border-0 mb-4">
+                                        <i class="fas fa-check-circle me-2"></i> <span
+                                            th:text="${successMessage}"></span>
+                                    </div>
+
+                                    <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+                                        <div class="mb-4">
+                                            <label class="form-label text-muted-light small text-uppercase fw-bold">Full
+                                                Name</label>
+                                            <div class="input-wrapper p-0 border-0">
+                                                <i class="fas fa-user icon"></i>
+                                                <input type="text" name="fullName" class="form-control ps-5"
+                                                    th:value="${user.fullName}" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label
+                                                class="form-label text-muted-light small text-uppercase fw-bold">Mobile
+                                                Number</label>
+                                            <div class="input-wrapper p-0 border-0">
+                                                <i class="fas fa-phone icon"></i>
+                                                <input type="tel" name="mobile" class="form-control ps-5"
+                                                    th:value="${user.mobile}">
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label
+                                                class="form-label text-muted-light small text-uppercase fw-bold">Address</label>
+                                            <div class="input-wrapper p-0 border-0">
+                                                <i class="fas fa-map-marker-alt icon" style="top: 1.5rem;"></i>
+                                                <textarea name="address" class="form-control ps-5" rows="3"
+                                                    th:text="${user.address}"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label
+                                                class="form-label text-muted-light small text-uppercase fw-bold">Update
+                                                Profile Photo</label>
+                                            <input type="file" name="profileImage" class="form-control">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill shadow-lg">
+                                            Update Details <i class="fas fa-arrow-right ms-2"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Change Password Tab -->
+                                <div class="tab-pane fade" id="password-pane" role="tabpanel">
+                                    <h4 class="mb-4 text-white fw-bold">Security <span
+                                            class="text-gradient">Settings</span></h4>
+
+                                    <div th:if="${errorMessage}"
+                                        class="alert alert-danger bg-danger bg-opacity-10 text-danger border-0 mb-4">
+                                        <i class="fas fa-exclamation-circle me-2"></i> <span
+                                            th:text="${errorMessage}"></span>
+                                    </div>
+
+                                    <form th:action="@{/profile/change-password}" method="post"
+                                        th:object="${passwordChangeDto}">
+                                        <div class="mb-4">
+                                            <label
+                                                class="form-label text-muted-light small text-uppercase fw-bold">Current
+                                                Password</label>
+                                            <div class="input-wrapper p-0 border-0">
+                                                <i class="fas fa-key icon"></i>
+                                                <input type="password" class="form-control ps-5"
+                                                    th:field="*{oldPassword}" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label text-muted-light small text-uppercase fw-bold">New
+                                                Password</label>
+                                            <div class="input-wrapper p-0 border-0">
+                                                <i class="fas fa-lock icon"></i>
+                                                <input type="password" class="form-control ps-5"
+                                                    th:field="*{newPassword}" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label
+                                                class="form-label text-muted-light small text-uppercase fw-bold">Confirm
+                                                New Password</label>
+                                            <div class="input-wrapper p-0 border-0">
+                                                <i class="fas fa-lock icon"></i>
+                                                <input type="password" class="form-control ps-5"
+                                                    th:field="*{confirmPassword}" required>
+                                            </div>
+                                        </div>
+
+                                        <div th:if="${passwordErrors}" class="mb-3">
+                                            <p th:each="err : ${passwordErrors.allErrors()}"
+                                                th:text="${err.defaultMessage}" class="text-danger small"><i
+                                                    class="fas fa-times-circle me-1"></i> Error</p>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill shadow-lg">
+                                            Change Password <i class="fas fa-shield-alt ms-2"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Saved Passengers Tab -->
+                                <div class="tab-pane fade" id="passengers-pane" role="tabpanel">
+                                    <h4 class="mb-4 text-white fw-bold">Saved <span
+                                            class="text-gradient">Passengers</span></h4>
+
+                                    <!-- Add Passenger Form -->
+                                    <div class="glass-card p-4 mb-4 border border-light border-opacity-10">
+                                        <h5 class="mb-3 text-white"><i
+                                                class="fas fa-user-plus me-2 text-primary"></i>Add New Passenger</h5>
+                                        <form th:action="@{/profile/passenger/add}" method="post" class="row g-3">
+                                            <div class="col-md-5">
+                                                <input type="text" name="name" class="form-control"
+                                                    placeholder="Full Name" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="number" name="age" class="form-control" placeholder="Age"
+                                                    required min="1" max="120">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select name="gender" class="form-select" required>
+                                                    <option value="" selected disabled>Select Gender</option>
+                                                    <option value="Male">Male</option>
+                                                    <option value="Female">Female</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 text-end">
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4">
+                                                    <i class="fas fa-plus me-1"></i> Add
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Passengers List -->
+                                    <div class="table-responsive">
+                                        <table class="table glass-table align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Age</th>
+                                                    <th>Gender</th>
+                                                    <th class="text-end">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="passenger : ${passengers}">
+                                                    <td class="fw-bold text-white" th:text="${passenger.name}">John Doe
+                                                    </td>
+                                                    <td class="text-muted-light" th:text="${passenger.age}">30</td>
+                                                    <td>
+                                                        <span class="badge bg-primary bg-opacity-10 text-primary"
+                                                            th:text="${passenger.gender}">Male</span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <form th:action="@{/profile/passenger/delete}" method="post"
+                                                            class="d-inline">
+                                                            <input type="hidden" name="id" th:value="${passenger.id}">
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-danger rounded-circle"
+                                                                title="Delete">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <tr th:if="${passengers == null || passengers.isEmpty()}">
+                                                    <td colspan="4" class="text-center py-4 text-muted-light">
+                                                        No saved passengers found. Add one above!
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="tab-pane fade" id="password-pane" role="tabpanel">
-                    <h4>Change Your Password</h4>
-                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-                    <form th:action="@{/profile/change-password}" method="post" th:object="${passwordChangeDto}">
-                        <div class="mb-3"><label class="form-label">Old Password</label><input type="password" class="form-control" th:field="*{oldPassword}" required></div>
-                        <div class="mb-3"><label class="form-label">New Password</label><input type="password" class="form-control" th:field="*{newPassword}" required></div>
-                        <div class="mb-3"><label class="form-label">Confirm New Password</label><input type="password" class="form-control" th:field="*{confirmPassword}" required></div>
-                        <div th:if="${passwordErrors}"><p th:each="err : ${passwordErrors.allErrors()}" th:text="${err.defaultMessage}" class="text-danger"></p></div>
-                        <button type="submit" class="btn btn-primary w-100">Change Password</button>
-                    </form>
-                </div>
             </div>
         </div>
-    </div>
-</div>
-</main>
+    </main>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-<div th:replace="~{fragments/footer :: scripts}"></div>
-</body>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check URL params for tab
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+
+            if (tab === 'password') {
+                const tabTrigger = new bootstrap.Tab(document.getElementById('password-tab'));
+                tabTrigger.show();
+            } else if (tab === 'passengers') {
+                const tabTrigger = new bootstrap.Tab(document.getElementById('passengers-tab'));
+                tabTrigger.show();
+            }
+        });
+    </script>
+
 </html>

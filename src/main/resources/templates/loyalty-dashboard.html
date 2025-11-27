@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header-css}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+
+    <main class="main-content">
+        <div class="container my-5">
+            <!-- Header Section -->
+            <div class="text-center mb-5 animate__animated animate__fadeInDown">
+                <h1 class="fw-bold text-white mb-2">Loyalty <span class="text-gradient">Rewards</span></h1>
+                <p class="text-muted-light">Earn points, refer friends, and get amazing discounts!</p>
+            </div>
+
+            <!-- Points Overview Cards -->
+            <div class="row g-4 mb-5">
+                <!-- Total Points -->
+                <div class="col-md-4 animate__animated animate__fadeInLeft">
+                    <div class="glass-card p-4 text-center h-100 position-relative overflow-hidden">
+                        <div class="position-absolute top-0 start-0 w-100 h-100"
+                            style="background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.15), transparent 70%); pointer-events: none;">
+                        </div>
+                        <div class="icon-box mx-auto mb-3"
+                            style="width: 70px; height: 70px; background: rgba(245, 158, 11, 0.2);">
+                            <i class="fas fa-coins text-warning" style="font-size: 2rem;"></i>
+                        </div>
+                        <h2 class="display-4 fw-bold text-warning mb-2" th:text="${totalPoints}">0</h2>
+                        <p class="text-muted-light mb-0">Total Points</p>
+                    </div>
+                </div>
+
+                <!-- Available Discount -->
+                <div class="col-md-4 animate__animated animate__fadeInUp">
+                    <div class="glass-card p-4 text-center h-100 position-relative overflow-hidden">
+                        <div class="position-absolute top-0 start-0 w-100 h-100"
+                            style="background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.15), transparent 70%); pointer-events: none;">
+                        </div>
+                        <div class="icon-box mx-auto mb-3"
+                            style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.2);">
+                            <i class="fas fa-tag text-success" style="font-size: 2rem;"></i>
+                        </div>
+                        <h2 class="display-4 fw-bold text-success mb-2">₹<span
+                                th:text="${#numbers.formatDecimal(availableDiscount, 1, 'COMMA', 0, 'POINT')}">0</span>
+                        </h2>
+                        <p class="text-muted-light mb-0">Available Discount</p>
+                    </div>
+                </div>
+
+                <!-- Successful Referrals -->
+                <div class="col-md-4 animate__animated animate__fadeInRight">
+                    <div class="glass-card p-4 text-center h-100 position-relative overflow-hidden">
+                        <div class="position-absolute top-0 start-0 w-100 h-100"
+                            style="background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.15), transparent 70%); pointer-events: none;">
+                        </div>
+                        <div class="icon-box mx-auto mb-3"
+                            style="width: 70px; height: 70px; background: rgba(79, 70, 229, 0.2);">
+                            <i class="fas fa-user-friends text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                        <h2 class="display-4 fw-bold text-primary mb-2" th:text="${successfulReferrals}">0</h2>
+                        <p class="text-muted-light mb-0">Friends Referred</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Referral Section -->
+                <div class="col-lg-6">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="mb-4 text-white fw-bold">
+                            <i class="fas fa-share-alt text-primary me-2"></i>Refer & Earn
+                        </h4>
+
+                        <div class="p-4 rounded-3 mb-4"
+                            style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(79, 70, 229, 0.2);">
+                            <p class="text-white mb-3">Share your referral code with friends and earn <strong
+                                    class="text-warning">100 points</strong> when they complete their first booking!</p>
+
+                            <label class="form-label text-muted-light small text-uppercase fw-bold">Your Referral
+                                Code</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control glass-input text-white fw-bold fs-4 text-center"
+                                    th:value="${referralCode}" id="referralCode" readonly>
+                                <button class="btn btn-primary" type="button" onclick="copyReferralCode()">
+                                    <i class="fas fa-copy me-2"></i>Copy
+                                </button>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline flex-fill" onclick="shareWhatsApp()">
+                                    <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                                </button>
+                                <button class="btn btn-outline flex-fill" onclick="shareTwitter()">
+                                    <i class="fab fa-twitter me-2"></i>Twitter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success bg-success bg-opacity-10 text-success border-0">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <small>You've successfully referred <strong th:text="${successfulReferrals}">0</strong>
+                                friends!</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to Earn Points -->
+                <div class="col-lg-6">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="mb-4 text-white fw-bold">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>How to Earn Points
+                        </h4>
+
+                        <div class="d-flex align-items-start mb-3 p-3 rounded-3"
+                            style="background: rgba(255,255,255,0.05);">
+                            <div class="icon-box me-3"
+                                style="width: 45px; height: 45px; background: rgba(79, 70, 229, 0.2);">
+                                <i class="fas fa-ticket-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white mb-1">Book Tickets</h6>
+                                <p class="text-muted-light small mb-0">Earn 1 point for every ₹1 spent on bookings</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-3 p-3 rounded-3"
+                            style="background: rgba(255,255,255,0.05);">
+                            <div class="icon-box me-3"
+                                style="width: 45px; height: 45px; background: rgba(16, 185, 129, 0.2);">
+                                <i class="fas fa-user-plus text-success"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white mb-1">Refer Friends</h6>
+                                <p class="text-muted-light small mb-0">Get 100 points when your friend completes their
+                                    first booking</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-3 p-3 rounded-3"
+                            style="background: rgba(255,255,255,0.05);">
+                            <div class="icon-box me-3"
+                                style="width: 45px; height: 45px; background: rgba(245, 158, 11, 0.2);">
+                                <i class="fas fa-gift text-warning"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white mb-1">Welcome Bonus</h6>
+                                <p class="text-muted-light small mb-0">New users get 50 points as a welcome gift</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-3"
+                            style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.2);">
+                            <h6 class="text-primary mb-2"><i class="fas fa-info-circle me-2"></i>Redemption Rate</h6>
+                            <p class="text-white mb-0">100 Points = ₹10 Discount on your next booking</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Points History -->
+            <div class="glass-card mt-4">
+                <div class="d-flex justify-content-between align-items-center p-4 border-bottom border-secondary"
+                    style="border-color: rgba(255,255,255,0.1) !important;">
+                    <h4 class="mb-0 text-white fw-bold">
+                        <i class="fas fa-history text-primary me-2"></i>Recent Activity
+                    </h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table glass-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Source</th>
+                                <th class="text-end">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="point : ${pointsHistory}">
+                                <td class="text-muted-light"
+                                    th:text="${#temporals.format(point.earnedAt, 'dd MMM yyyy, hh:mm a')}">Date</td>
+                                <td class="text-white" th:text="${point.description}">Description</td>
+                                <td>
+                                    <span th:if="${point.source == 'BOOKING'}" class="badge bg-primary rounded-pill">
+                                        <i class="fas fa-ticket-alt me-1"></i>Booking
+                                    </span>
+                                    <span th:if="${point.source == 'REFERRAL'}" class="badge bg-success rounded-pill">
+                                        <i class="fas fa-user-plus me-1"></i>Referral
+                                    </span>
+                                    <span th:if="${point.source == 'BONUS'}"
+                                        class="badge bg-warning text-dark rounded-pill">
+                                        <i class="fas fa-gift me-1"></i>Bonus
+                                    </span>
+                                    <span th:if="${point.source == 'REDEMPTION'}" class="badge bg-danger rounded-pill">
+                                        <i class="fas fa-tag me-1"></i>Redeemed
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <span th:if="${point.points > 0}" class="text-success fw-bold">
+                                        +<span th:text="${point.points}">0</span>
+                                    </span>
+                                    <span th:if="${point.points < 0}" class="text-danger fw-bold"
+                                        th:text="${point.points}">0</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(pointsHistory)}">
+                                <td colspan="4" class="text-center py-5 text-secondary">
+                                    <i class="fas fa-inbox fa-3x mb-3 d-block opacity-50"></i>
+                                    No activity yet. Start booking to earn points!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <script th:inline="javascript">
+        const referralCode = /*[[${referralCode}]]*/ '';
+
+        function copyReferralCode() {
+            const codeInput = document.getElementById('referralCode');
+            codeInput.select();
+            document.execCommand('copy');
+
+            // Show success message
+            const btn = event.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-primary');
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-primary');
+            }, 2000);
+        }
+
+        function shareWhatsApp() {
+            const message = `Join me on BusApp and get 50 bonus points! Use my referral code: ${referralCode}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function shareTwitter() {
+            const message = `Join me on BusApp and get 50 bonus points! Use code: ${referralCode}`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
+        }
+    </script>
+</body>
+
+</html>

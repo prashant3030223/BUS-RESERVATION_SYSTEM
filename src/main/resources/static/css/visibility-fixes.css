@@ -1,0 +1,621 @@
+/*
+  Critical Visibility Fixes
+  Force all text and icons to be visible in both light and dark modes
+*/
+
+/* ==== CRITICAL: Search Form Labels ==== */
+[data-theme="light"] .input-wrapper label,
+[data-theme="light"] .small.text-muted-light,
+[data-theme="light"] label.small,
+[data-theme="light"] .search-widget label,
+[data-theme="light"] .search-widget .small {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+/* Search widget heading */
+[data-theme="light"] .search-widget h5,
+[data-theme="light"] .search-widget .h5 {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+/* Search widget icons */
+[data-theme="light"] .search-widget .icon-box i {
+    color: var(--color-primary) !important;
+}
+
+/* Fix Calendar Icon in Light Mode - FORCE NATIVE LIGHT SCHEME */
+[data-theme="light"] input[type="date"],
+[data-theme="light"] input[type="datetime-local"],
+[data-theme="light"] input[type="month"],
+[data-theme="light"] input[type="time"] {
+    color-scheme: light !important;
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none !important;
+    opacity: 1 !important;
+    cursor: pointer;
+}
+
+/* Fix Primary Button Visibility in Light Mode */
+[data-theme="light"] .btn-primary {
+    color: #ffffff !important;
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+[data-theme="light"] .btn-primary:hover {
+    background-color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary-dark) !important;
+    color: #ffffff !important;
+}
+
+/* Fix Text Muted Light in Light Mode */
+/* Fix Text Muted Light in Light Mode */
+[data-theme="light"] .text-muted-light {
+    color: #64748b !important;
+    /* Slate 500 - visible on white */
+}
+
+/* ==== FORCE PREMIUM BUTTON STYLES ==== */
+.nav-btn {
+    padding: 0.5rem 1.5rem !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.9rem !important;
+}
+
+.nav-btn-outline {
+    color: var(--color-text) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: transparent !important;
+}
+
+.nav-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-color: #fff !important;
+    transform: translateY(-2px);
+}
+
+.nav-btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3) !important;
+}
+
+.nav-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .nav-btn-outline {
+    color: #0f172a !important;
+    border-color: rgba(15, 23, 42, 0.2) !important;
+}
+
+[data-theme="light"] .nav-btn-outline:hover {
+    background: var(--color-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Search Button Force Style */
+.btn-search {
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)) !important;
+    color: #ffffff !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.2rem !important;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3) !important;
+}
+
+.btn-search:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5) !important;
+}
+
+/* ==== CRITICAL: Booking Page Fixes ==== */
+[data-theme="light"] .bus-layout {
+    background: #ffffff !important;
+    border: 2px solid var(--border-color) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Fix AI Smart Search Badge in Light Mode */
+[data-theme="light"] .search-widget .badge {
+    color: #ffffff !important;
+    background: var(--color-primary) !important;
+    box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3) !important;
+}
+
+[data-theme="light"] .search-widget .badge i {
+    color: #ffffff !important;
+}
+
+/* ==== Transaction History Visibility Fixes ==== */
+/* Fix Badge Text Visibility */
+.bg-success.bg-opacity-20.text-success {
+    color: #4ade80 !important;
+    /* Brighter green */
+    background-color: rgba(74, 222, 128, 0.2) !important;
+}
+
+.bg-danger.bg-opacity-20.text-danger {
+    color: #f87171 !important;
+    /* Brighter red */
+    background-color: rgba(248, 113, 113, 0.2) !important;
+}
+
+/* Fix Description Text Visibility in Dark Mode */
+[data-theme="dark"] .text-muted {
+    color: #94a3b8 !important;
+    /* Slate 400 - visible on dark */
+}
+
+/* Fix Table Text in Dark Mode */
+[data-theme="dark"] .custom-table td {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .bus-front {
+    background: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .seat-shape {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #64748b !important;
+}
+
+[data-theme="light"] .seat:hover:not(.booked) .seat-shape {
+    background: rgba(14, 165, 233, 0.1) !important;
+    border-color: #0ea5e9 !important;
+    color: #0ea5e9 !important;
+}
+
+[data-theme="light"] .seat.selected .seat-shape {
+    background: #0ea5e9 !important;
+    border-color: #0ea5e9 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .seat.booked .seat-shape {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #ef4444 !important;
+}
+
+[data-theme="light"] .driver-seat {
+    border-color: #94a3b8 !important;
+    color: #64748b !important;
+}
+
+[data-theme="light"] .steering-wheel {
+    color: #94a3b8 !important;
+}
+
+[data-theme="light"] .aisle-spacer {
+    color: #94a3b8 !important;
+}
+
+/* ==== CRITICAL: Transaction History Fixes ==== */
+/* Badges in Dark Mode */
+[data-theme="dark"] .badge,
+:root:not([data-theme]) .badge {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .bg-success,
+:root:not([data-theme]) .bg-success {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .bg-info,
+:root:not([data-theme]) .bg-info {
+    background-color: rgba(6, 182, 212, 0.2) !important;
+    color: #22d3ee !important;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+/* Description Text */
+[data-theme="dark"] .text-muted,
+:root:not([data-theme]) .text-muted {
+    color: #cbd5e1 !important;
+    /* Lighter gray for better contrast */
+    opacity: 1 !important;
+}
+
+/* Table Row Background */
+[data-theme="dark"] .glass-table tbody tr,
+:root:not([data-theme]) .glass-table tbody tr {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* ==== FORCE VISIBILITY - DARK MODE (DEFAULT) ==== */
+:root:not([data-theme]),
+[data-theme="dark"] {
+
+    /* Ensure all icons are visible */
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fal,
+    .fad {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* Navbar brand icon */
+    .navbar-brand i {
+        color: var(--color-primary-light) !important;
+    }
+
+    /* All headings */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: #ffffff !important;
+    }
+
+    /* All text */
+    p,
+    span,
+    div,
+    label,
+    a {
+        color: var(--color-text);
+    }
+
+    /* Buttons */
+    .btn {
+        color: #ffffff;
+    }
+}
+
+/* ==== FORCE VISIBILITY - LIGHT MODE ==== */
+[data-theme="light"] {
+
+    /* Ensure all icons are visible */
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fal,
+    .fad {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* Navbar brand icon */
+    .navbar-brand i {
+        color: var(--color-primary) !important;
+    }
+
+    /* All headings */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--color-text) !important;
+    }
+
+    /* All text */
+    p,
+    span,
+    div,
+    label {
+        color: var(--color-text) !important;
+    }
+
+    /* Links */
+    a {
+        color: var(--color-primary) !important;
+    }
+
+    a:hover {
+        color: var(--color-primary-dark) !important;
+    }
+
+    /* Buttons */
+    .btn {
+        color: #ffffff !important;
+    }
+
+    .btn-outline {
+        color: var(--color-primary) !important;
+    }
+
+    /* Nav buttons */
+    .nav-btn-outline {
+        color: var(--color-primary) !important;
+    }
+
+    .nav-btn-primary {
+        color: #ffffff !important;
+    }
+
+    /* Icon boxes */
+    .icon-box i {
+        color: var(--color-primary) !important;
+    }
+
+    /* Feature icons */
+    .feature-icon i {
+        color: var(--color-primary) !important;
+    }
+
+    /* Stat icons */
+    .stat-icon i {
+        color: #ffffff !important;
+    }
+
+    /* Footer */
+    .footer-brand {
+        color: var(--color-text) !important;
+    }
+
+    .footer-description {
+        color: var(--color-text-muted) !important;
+    }
+
+    .footer-heading {
+        color: var(--color-text) !important;
+    }
+
+    .footer-links a {
+        color: var(--color-text-muted) !important;
+    }
+
+    .footer-bottom {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* Social icons */
+    .social-icon {
+        color: var(--color-text) !important;
+    }
+
+    /* Admin sidebar */
+    .sidebar-logo {
+        color: var(--color-text) !important;
+    }
+
+    .sidebar-logo i {
+        color: var(--color-primary) !important;
+    }
+
+    .nav-section-title {
+        color: var(--color-text-muted) !important;
+    }
+
+    .admin-sidebar .nav-link {
+        color: var(--color-text-muted) !important;
+    }
+
+    .admin-sidebar .nav-link i {
+        color: var(--color-text-muted) !important;
+    }
+
+    .admin-sidebar .nav-link:hover {
+        color: var(--color-primary) !important;
+    }
+
+    .admin-sidebar .nav-link:hover i {
+        color: var(--color-primary) !important;
+    }
+
+    .admin-sidebar .nav-link.active {
+        color: var(--color-primary) !important;
+    }
+
+    .admin-sidebar .nav-link.active i {
+        color: var(--color-primary) !important;
+    }
+
+    /* Tables */
+    .glass-table thead th {
+        color: var(--color-text) !important;
+    }
+
+    .glass-table tbody td {
+        color: var(--color-text) !important;
+    }
+
+    /* Forms */
+    .form-label {
+        color: var(--color-text) !important;
+    }
+
+    .form-control {
+        color: var(--color-text) !important;
+    }
+
+    .form-select {
+        color: var(--color-text) !important;
+    }
+
+    /* Input icons */
+    .input-wrapper i {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* Badges */
+    .badge {
+        color: #ffffff !important;
+    }
+
+    /* Alerts */
+    .alert {
+        color: inherit !important;
+    }
+
+    .alert i {
+        color: inherit !important;
+    }
+
+    /* Cards */
+    .card {
+        color: var(--color-text) !important;
+    }
+
+    .card-title {
+        color: var(--color-text) !important;
+    }
+
+    .card-text {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* Glass cards */
+    .glass-card {
+        color: var(--color-text) !important;
+    }
+
+    .glass-card h1,
+    .glass-card h2,
+    .glass-card h3,
+    .glass-card h4,
+    .glass-card h5,
+    .glass-card h6 {
+        color: var(--color-text) !important;
+    }
+
+    /* Text gradient should still work */
+    .text-gradient {
+        background: var(--gradient-text);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Stat values */
+    .stat-value {
+        background: var(--gradient-text);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Welcome text */
+    .welcome-text h1,
+    .welcome-text h2 {
+        color: var(--color-text) !important;
+    }
+
+    /* Ensure bg-dark elements are visible */
+    .bg-dark {
+        background-color: #ffffff !important;
+        color: var(--color-text) !important;
+    }
+
+    .bg-dark h1,
+    .bg-dark h2,
+    .bg-dark h3,
+    .bg-dark h4,
+    .bg-dark h5,
+    .bg-dark h6 {
+        color: var(--color-text) !important;
+    }
+
+    /* Ensure bg-opacity elements are visible */
+    .bg-opacity-50,
+    .bg-opacity-75 {
+        color: var(--color-text) !important;
+    }
+}
+
+/* ==== UNIVERSAL FIXES ==== */
+
+/* Ensure all Font Awesome icons inherit proper color */
+.fa,
+.fas,
+.far,
+.fab,
+.fal,
+.fad {
+    display: inline-block;
+}
+
+/* Ensure button icons are visible */
+.btn i {
+    color: inherit !important;
+}
+
+/* Ensure nav link icons are visible */
+.nav-link i {
+    color: inherit !important;
+}
+
+/* Ensure dropdown icons are visible */
+.dropdown-toggle i {
+    color: inherit !important;
+}
+
+/* Ensure all text in buttons is visible */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info,
+.btn-light,
+.btn-dark {
+    color: #ffffff !important;
+}
+
+.btn-outline,
+.btn-outline-primary,
+.btn-outline-secondary {
+    color: var(--color-primary) !important;
+}
+
+[data-theme="light"] .btn-outline:hover,
+[data-theme="light"] .btn-outline-primary:hover {
+    color: #ffffff !important;
+}
+
+/* Ensure placeholder text is visible */
+::placeholder {
+    opacity: 0.6;
+}
+
+[data-theme="light"] ::placeholder {
+    color: var(--color-text-muted) !important;
+    opacity: 0.7;
+}
+
+/* Ensure disabled elements are visible but dimmed */
+:disabled,
+.disabled {
+    opacity: 0.5;
+}

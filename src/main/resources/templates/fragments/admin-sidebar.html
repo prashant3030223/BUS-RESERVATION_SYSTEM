@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:fragment="admin-sidebar-css">
+        <style>
+            /* Sidebar Variables - Inherits from Dashboard if available, else defaults */
+            :root {
+                --sidebar-width: 280px;
+                --sidebar-bg: rgba(15, 23, 42, 0.95);
+                --sidebar-border: rgba(255, 255, 255, 0.08);
+                --nav-item-hover: rgba(255, 255, 255, 0.05);
+                --nav-item-active: rgba(14, 165, 233, 0.15);
+                --nav-accent: #0ea5e9;
+            }
+
+            .admin-sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: var(--sidebar-width);
+                background: var(--sidebar-bg);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-right: 1px solid var(--sidebar-border);
+                z-index: 1000;
+                padding: 2rem 1.5rem;
+                overflow-y: auto;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Mobile Handling */
+            @media (max-width: 992px) {
+                .admin-sidebar {
+                    transform: translateX(-100%);
+                }
+
+                .admin-sidebar.active {
+                    transform: translateX(0);
+                }
+            }
+
+            .sidebar-header {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 3rem;
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid var(--sidebar-border);
+            }
+
+            .sidebar-logo {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #fff;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .sidebar-logo i {
+                color: var(--nav-accent);
+                filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.5));
+            }
+
+            .nav-section {
+                margin-bottom: 2rem;
+            }
+
+            .nav-section-title {
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: #64748b;
+                margin-bottom: 0.5rem;
+                padding: 0.5rem 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: color 0.3s ease;
+            }
+
+            .nav-section-title:hover {
+                color: var(--nav-accent);
+            }
+
+            .nav-section-title i {
+                transition: transform 0.3s ease;
+                font-size: 0.8rem;
+            }
+
+            .nav-section-title.collapsed i {
+                transform: rotate(-90deg);
+            }
+
+            .nav-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                max-height: 500px;
+                /* Arbitrary large height for transition */
+                overflow: hidden;
+                transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+                opacity: 1;
+            }
+
+            .nav-list.collapsed {
+                max-height: 0;
+                opacity: 0;
+            }
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 0.875rem 1rem;
+                color: #94a3b8;
+                text-decoration: none;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .nav-link:hover {
+                background: var(--nav-item-hover);
+                color: #fff;
+                transform: translateX(5px);
+            }
+
+            .nav-link.active {
+                background: var(--nav-item-active);
+                color: #fff;
+                border: 1px solid rgba(14, 165, 233, 0.2);
+            }
+
+            .nav-link.active::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                height: 20px;
+                width: 3px;
+                background: var(--nav-accent);
+                border-radius: 0 4px 4px 0;
+                box-shadow: 0 0 10px var(--nav-accent);
+            }
+
+            .nav-link i {
+                width: 24px;
+                text-align: center;
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+            }
+
+            .nav-link.active i {
+                color: var(--nav-accent);
+                filter: drop-shadow(0 0 5px rgba(14, 165, 233, 0.5));
+            }
+
+            .nav-badge {
+                margin-left: auto;
+                background: #ef4444;
+                color: white;
+                font-size: 0.7rem;
+                padding: 0.2rem 0.6rem;
+                border-radius: 20px;
+                font-weight: 600;
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+            }
+
+            /* Mobile Overlay */
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(4px);
+                z-index: 999;
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+        </style>
+        <script>
+            (function () {
+                const theme = localStorage.getItem('bus-reservation-theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (theme === 'light') {
+                    document.write('<style>body { background-color: #f8fafc !important; } #global-loader { background-color: rgba(255, 255, 255, 0.9) !important; }</style>');
+                }
+            })();
+        </script>
+    </th:block>
+</head>
+
+<body>
+    <div th:fragment="admin-sidebar">
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <!-- Header -->
+            <div class="sidebar-header d-flex justify-content-between align-items-center">
+                <a href="/admin/dashboard" class="sidebar-logo">
+                    <i class="fas fa-cube"></i>
+                    <span>AdminPanel</span>
+                </a>
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Theme Toggle Button -->
+                    <button class="theme-toggle-btn" type="button" aria-label="Toggle theme"
+                        title="Toggle dark/light mode" style="width: 50px; height: 28px;">
+                        <div class="theme-toggle-icons">
+                            <i class="fas fa-moon"></i>
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <div class="theme-toggle-slider" style="width: 20px; height: 20px;">
+                            <i class="fas fa-moon" style="font-size: 0.65rem;"></i>
+                        </div>
+                    </button>
+                    <button class="btn btn-link text-light d-lg-none p-0" id="closeSidebar">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <!-- Main Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSection(this)">
+                        <span>Core Management</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/buses" class="nav-link"><i class="fas fa-bus"></i>
+                                <span>Manage Buses</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/schedules" class="nav-link"><i class="fas fa-calendar-alt"></i>
+                                <span>Manage Schedules</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/bookings" class="nav-link"><i class="fas fa-ticket-alt"></i>
+                                <span>View Bookings</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/admin/users}" class="nav-link"><i class="fas fa-users"></i>
+                                <span>View Users</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/admin/payments}" class="nav-link"><i class="fas fa-credit-card"></i>
+                                <span>Payment Management</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/admin/staff}" class="nav-link"><i class="fas fa-user-tie"></i>
+                                <span>Manage Staff</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- AI Tools Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSection(this)">
+                        <span>AI Intelligence</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/reports" class="nav-link"><i class="fas fa-chart-line"></i>
+                                <span>Reports & Analytics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/security-audit" class="nav-link"><i class="fas fa-shield-alt"></i>
+                                <span>Security Audit</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="/admin/loyalty-program" class="nav-link"><i class="fas fa-gift"></i>
+                                <span>Loyalty & Referrals</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/carbon-report" class="nav-link"><i class="fas fa-leaf"></i>
+                                <span>Carbon Report</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a href="/admin/settings" class="nav-link"><i class="fas fa-cogs"></i>
+                                <span>System Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Support Section -->
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSection(this)">
+                        <span>Support & Feedback</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/feedback" class="nav-link"><i class="fas fa-comments"></i>
+                                <span>User Feedback</span>
+                                <span class="nav-badge" th:if="${newCount != null && newCount > 0}"
+                                    th:text="${newCount}">0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <script>
+            // Toggle Section Function - Make it global and available immediately
+            window.toggleSection = function (element) {
+                if (!element) return;
+                element.classList.toggle('collapsed');
+                const list = element.nextElementSibling;
+                if (list) {
+                    list.classList.toggle('collapsed');
+                }
+            };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const sidebar = document.getElementById('adminSidebar');
+                const mobileOverlay = document.getElementById('mobileOverlay');
+                // Check for both possible IDs for the toggle button
+                const openButton = document.getElementById('openAdminSidebar') || document.getElementById('menuToggle');
+                const closeButton = document.getElementById('closeSidebar');
+
+                // Open sidebar when clicking Admin Panel button in header or menu toggle
+                if (openButton) {
+                    openButton.addEventListener('click', function (e) {
+                        if (sidebar) {
+                            e.preventDefault();
+                            sidebar.classList.add('active');
+                            if (mobileOverlay) {
+                                mobileOverlay.classList.add('active');
+                            }
+                        }
+                    });
+                }
+
+                // Close sidebar function
+                function closeSidebar() {
+                    if (sidebar) {
+                        sidebar.classList.remove('active');
+                    }
+                    if (mobileOverlay) {
+                        mobileOverlay.classList.remove('active');
+                    }
+                }
+
+                // Close sidebar on mobile overlay click
+                if (mobileOverlay) {
+                    mobileOverlay.addEventListener('click', closeSidebar);
+                }
+
+                // Close sidebar on close button click
+                if (closeButton) {
+                    closeButton.addEventListener('click', closeSidebar);
+                }
+
+                // Set active link based on current URL and expand parent section
+                if (sidebar) {
+                    const currentPath = window.location.pathname;
+                    const navLinks = sidebar.querySelectorAll('.nav-link');
+                    let activeLink = null;
+
+                    // Sort links by href length (descending) to match most specific path first
+                    const sortedLinks = Array.from(navLinks).sort((a, b) => {
+                        return b.getAttribute('href').length - a.getAttribute('href').length;
+                    });
+
+                    for (const link of sortedLinks) {
+                        const href = link.getAttribute('href');
+                        // Check for exact match or if current path starts with href (for sub-pages)
+                        // But ensure we don't match /admin/users against /admin/user-settings
+                        if (href === currentPath || (currentPath.startsWith(href) && href !== '/admin' && href !== '/')) {
+                            activeLink = link;
+                            break;
+                        }
+                    }
+
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                        // Expand parent section
+                        const parentList = activeLink.closest('.nav-list');
+                        if (parentList) {
+                            parentList.classList.remove('collapsed');
+                            const title = parentList.previousElementSibling;
+                            if (title) title.classList.remove('collapsed');
+                        }
+                    }
+                }
+            });
+
+            // Hide Loader on Load
+            window.addEventListener('load', function () {
+                const loader = document.getElementById('global-loader');
+                if (loader) {
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                    }, 500);
+                }
+            });
+        </script>
+
+        <!-- Global Loader for Admin Pages -->
+        <div id="global-loader">
+            <div class="loader-content">
+                <div class="spinner"></div>
+                <div class="loader-text">Loading...</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

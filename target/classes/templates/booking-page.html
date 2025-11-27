@@ -1,125 +1,553 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header-css}"></head>
-<body>
-<div th:replace="~{fragments/header :: navbar}"></div>
 
-<main class="main-content">
-<div class="container mt-5">
-    <div class="col-md-8 mx-auto">
-        <div class="form-container">
-            <h2>Select Your Seat(s)</h2>
-            <div class="card bg-dark text-white mb-4">
-                 <div class="card-body">
-                    <h5 class="card-title" th:text="${schedule.bus.busName}">Bus Name</h5>
-                    <p class="card-text"><strong>Route:</strong> <b th:text="${schedule.source}"></b> To <b th:text="${schedule.destination}"></b></p>
+<head th:replace="~{fragments/header :: header-css}">
+</head>
+
+<body>
+    <!-- Custom Styles for Booking Page -->
+    <style>
+        :root {
+            --seat-size: 45px;
+            --seat-gap: 12px;
+            --aisle-gap: 40px;
+        }
+
+        .booking-container {
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        /* Bus Layout */
+        .bus-layout {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 3rem 2rem;
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .bus-front {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0 0 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+        }
+
+        .steering-wheel {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.3);
+            transform: rotate(-15deg);
+        }
+
+        .driver-seat {
+            position: absolute;
+            top: 80px;
+            right: 40px;
+            width: var(--seat-size);
+            height: var(--seat-size);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+        }
+
+        /* Seat Styling */
+        .seat-map {
+            display: flex;
+            flex-direction: column;
+            gap: var(--seat-gap);
+            margin-top: 80px;
+            /* Space for driver area */
+            align-items: center;
+        }
+
+        .seat-row {
+            display: flex;
+            gap: var(--seat-gap);
+            align-items: center;
+        }
+
+        .aisle-spacer {
+            width: var(--aisle-gap);
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .seat {
+            width: var(--seat-size);
+            height: var(--seat-size);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Seat Shape using CSS */
+        .seat-shape {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px 8px 12px 12px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Armrests */
+        .seat-shape::before,
+        .seat-shape::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            width: 4px;
+            height: 40%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .seat-shape::before {
+            left: -2px;
+        }
+
+        .seat-shape::after {
+            right: -2px;
+        }
+
+        /* Seat Top Cushion */
+        .seat-cushion {
+            position: absolute;
+            top: -5px;
+            left: 10%;
+            width: 80%;
+            height: 8px;
+            background: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        /* States */
+        .seat:hover:not(.booked) .seat-shape {
+            background: rgba(14, 165, 233, 0.3);
+            border-color: #0ea5e9;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(14, 165, 233, 0.2);
+        }
+
+        .seat.selected .seat-shape {
+            background: #0ea5e9;
+            border-color: #0ea5e9;
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .seat.booked {
+            cursor: not-allowed;
+        }
+
+        .seat.booked .seat-shape {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: rgba(239, 68, 68, 0.5);
+            opacity: 0.7;
+        }
+
+        .seat.booked .seat-shape::before,
+        .seat.booked .seat-shape::after {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Legend */
+        .seat-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        /* Summary Panel */
+        .summary-panel {
+            position: sticky;
+            top: 100px;
+        }
+
+        .selected-seats-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 40px;
+        }
+
+        .seat-tag {
+            background: rgba(14, 165, 233, 0.2);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: #0ea5e9;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .seat-tag i {
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .seat-tag i:hover {
+            color: #fff;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bus-layout {
+                padding: 2rem 1rem;
+            }
+
+            :root {
+                --seat-size: 35px;
+                --seat-gap: 8px;
+                --aisle-gap: 25px;
+            }
+        }
+    </style>
+
+    <div th:replace="~{fragments/header :: navbar}"></div>
+
+    <main class="main-content booking-container">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="text-center mb-5 animate__animated animate__fadeInDown">
+                <h2 class="fw-bold text-white mb-2">Select Your Seats</h2>
+                <p class="text-muted-light">
+                    <span th:text="${schedule.source}">Source</span>
+                    <i class="fas fa-arrow-right mx-2 text-primary"></i>
+                    <span th:text="${schedule.destination}">Destination</span>
+                </p>
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill glass-card border-0">
+                    <i class="fas fa-bus text-primary"></i>
+                    <span class="small text-white" th:text="${schedule.bus.busName}">Bus Name</span>
+                    <span class="text-muted-light mx-1">|</span>
+                    <i class="fas fa-clock text-warning"></i>
+                    <span class="small text-white"
+                        th:text="${#temporals.format(schedule.departureTime, 'hh:mm a')}">Time</span>
                 </div>
             </div>
-            
-            <div id="error-message" class="alert alert-danger" style="display: none;"></div>
-            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
-            <div class="seat-map-container mb-3">
-                <div id="seat-map"></div>
-                <ul class="seat-legend">
-                    <li><div class="seat available"></div> Available</li>
-                    <li><div class="seat selected"></div> Selected</li>
-                    <li><div class="seat booked"></div> Booked</li>
-                </ul>
-            </div>
-            
-            <div class="text-center mb-4">
-                <h4>Total Price: ₹<span id="total-price">0.00</span></h4>
-            </div>
+            <div class="row g-5">
+                <!-- Left Column: Bus Layout -->
+                <div class="col-lg-7 animate__animated animate__fadeInLeft">
+                    <div class="bus-layout">
+                        <div class="bus-front">
+                            <span class="small text-uppercase ls-1 text-muted-light">Front</span>
+                        </div>
+                        <i class="fas fa-steering-wheel steering-wheel"></i>
+                        <div class="driver-seat">
+                            <i class="fas fa-user"></i>
+                        </div>
 
-            <form id="bookingForm" th:action="@{/book/confirm}" method="post">
-                <input type="hidden" name="scheduleId" th:value="${schedule.id}" />
-                <input type="hidden" name="seatNumbers" id="seatNumbers" required>
-                <button type="submit" class="btn btn-primary w-100">Confirm Booking</button>
-            </form>
+                        <div id="seat-map" class="seat-map">
+                            <!-- Seats generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="seat-legend">
+                        <div class="legend-item">
+                            <div class="legend-box"
+                                style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
+                            </div>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box" style="background: #0ea5e9;"></div>
+                            <span>Selected</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box"
+                                style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">
+                            </div>
+                            <span>Booked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Booking Summary -->
+                <div class="col-lg-5 animate__animated animate__fadeInRight">
+                    <div class="glass-card p-4 summary-panel">
+                        <h4 class="fw-bold text-white mb-4">Booking Summary</h4>
+
+                        <div class="mb-4">
+                            <label class="small text-muted-light text-uppercase fw-bold mb-2">Selected Seats</label>
+                            <div id="selected-seats-container" class="selected-seats-tags">
+                                <span class="text-muted small fst-italic" id="no-seats-msg">No seats selected</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4 p-3 rounded"
+                            style="background: rgba(255, 255, 255, 0.05);">
+                            <div>
+                                <small class="text-muted-light d-block">Price per seat</small>
+                                <span class="fw-bold text-white"
+                                    th:text="'₹' + ${#numbers.formatDecimal(schedule.price, 1, 'COMMA', 2, 'POINT')}">₹0.00</span>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted-light d-block">Total Amount</small>
+                                <span class="h3 fw-bold text-gradient mb-0" id="total-price-display">₹0.00</span>
+                            </div>
+                        </div>
+
+                        <div id="error-message"
+                            class="alert alert-danger glass-card border-danger d-flex align-items-center"
+                            style="display: none;">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span class="small"></span>
+                        </div>
+                        <div th:if="${errorMessage}"
+                            class="alert alert-danger glass-card border-danger d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span class="small" th:text="${errorMessage}"></span>
+                        </div>
+
+                        <form id="bookingForm" th:action="@{/book/confirm}" method="post">
+                            <input type="hidden" name="scheduleId" th:value="${schedule.id}" />
+                            <input type="hidden" name="seatNumbers" id="seatNumbers" required>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-lg rounded-pill">
+                                Proceed to Pay <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </form>
+
+                        <div class="mt-4 text-center">
+                            <small class="text-muted-light">
+                                <i class="fas fa-shield-alt me-1"></i> Secure Payment & Instant Confirmation
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-</main>
+    </main>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
-<script th:inline="javascript">
-    document.addEventListener("DOMContentLoaded", function() {
-        const totalSeats =  30;
-        const bookedSeats = new Set();
-        const pricePerSeat = 550.0;
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener("DOMContentLoaded", function () {
+            const totalSeats = /*[[${schedule.bus.totalSeats}]]*/ 30;
+            const bookedSeats = /*[[${bookedSeats}]]*/[];
+            const pricePerSeat = /*[[${schedule.price}]]*/ 550.0;
 
-        const seatMap = document.getElementById('seat-map');
-        const seatNumbersInput = document.getElementById('seatNumbers');
-        const totalPriceDisplay = document.getElementById('total-price');
-        const bookingForm = document.getElementById('bookingForm');
-        const errorMessageDiv = document.getElementById('error-message');
+            const bookedSeatsSet = new Set((bookedSeats || []).map(s => String(s)));
+            const seatMap = document.getElementById('seat-map');
+            const seatNumbersInput = document.getElementById('seatNumbers');
+            const totalPriceDisplay = document.getElementById('total-price-display');
+            const selectedSeatsContainer = document.getElementById('selected-seats-container');
+            const noSeatsMsg = document.getElementById('no-seats-msg');
+            const bookingForm = document.getElementById('bookingForm');
+            const errorMessageDiv = document.getElementById('error-message');
 
-        const selectedSeats = new Set();
-        let rows = Math.ceil(totalSeats / 4);
+            const selectedSeats = new Set();
 
-        for (let i = 0; i < rows; i++) {
-            const row = document.createElement('div');
-            row.classList.add('seat-row');
-            for (let j = 1; j <= 5; j++) {
-                if (j === 3) { 
-                    const aisle = document.createElement('div');
-                    aisle.classList.add('seat-label');
-                    row.appendChild(aisle);
-                    continue;
+            // Generate Seats
+            // Assuming 2+2 Layout for now (4 seats per row)
+            const seatsPerRow = 4;
+            const rows = Math.ceil(totalSeats / seatsPerRow);
+
+            for (let i = 0; i < rows; i++) {
+                const row = document.createElement('div');
+                row.classList.add('seat-row');
+
+                // Row Label (optional, maybe just seat numbers)
+
+                for (let j = 1; j <= 5; j++) {
+                    // Aisle logic: 2 seats, aisle, 2 seats
+                    if (j === 3) {
+                        const aisle = document.createElement('div');
+                        aisle.classList.add('aisle-spacer');
+                        // aisle.innerText = i + 1; // Row number in aisle
+                        row.appendChild(aisle);
+                        continue;
+                    }
+
+                    // Calculate seat number
+                    // Logic: Row 0 -> 1,2 (aisle) 3,4
+                    // Row 1 -> 5,6 (aisle) 7,8
+                    let colIndex = j > 3 ? j - 1 : j;
+                    let seatNum = (i * seatsPerRow) + colIndex;
+
+                    if (seatNum > totalSeats) {
+                        // Add empty placeholder to maintain alignment if needed
+                        const placeholder = document.createElement('div');
+                        placeholder.style.width = 'var(--seat-size)';
+                        row.appendChild(placeholder);
+                        continue;
+                    }
+
+                    // Seat ID format: "1", "2", etc. or "A1", "A2"
+                    // Keeping it simple as numbers for now based on backend logic usually expecting numbers or simple strings
+                    // If backend expects "A1", change logic here.
+                    // Based on previous file, it used "A1", "A2". Let's stick to that for consistency if that's what backend uses.
+                    // Previous logic: String.fromCharCode(65 + i) + (j > 3 ? j - 1 : j);
+                    const seatId = String.fromCharCode(65 + i) + (j > 3 ? j - 1 : j);
+
+                    const seat = document.createElement('div');
+                    seat.classList.add('seat');
+                    seat.dataset.seatId = seatId;
+
+                    // Inner HTML for styling
+                    seat.innerHTML = `
+                        <div class="seat-cushion"></div>
+                        <div class="seat-shape">${seatId}</div>
+                    `;
+
+                    if (bookedSeatsSet.has(seatId)) {
+                        seat.classList.add('booked');
+                        seat.title = "Booked";
+                    } else {
+                        seat.title = `Seat ${seatId} - ₹${pricePerSeat}`;
+                        seat.addEventListener('click', () => toggleSeat(seat, seatId));
+                    }
+                    row.appendChild(seat);
                 }
-                let seatNumber = i * 4 + (j > 3 ? j - 1 : j);
-                if (seatNumber > totalSeats) continue;
+                seatMap.appendChild(row);
+            }
 
-                const seatId = String.fromCharCode(65 + i) + (j > 3 ? j - 1 : j);
-
-                const seat = document.createElement('div');
-                seat.classList.add('seat');
-                seat.innerText = seatId;
-                seat.dataset.seatId = seatId;
-
-                if (bookedSeats.has(seatId)) {
-                    seat.classList.add('booked');
+            function toggleSeat(seatElement, seatId) {
+                if (seatElement.classList.contains('selected')) {
+                    seatElement.classList.remove('selected');
+                    selectedSeats.delete(seatId);
                 } else {
-                    seat.classList.add('available');
-                    seat.addEventListener('click', () => {
-                        if (seat.classList.contains('selected')) {
-                            seat.classList.remove('selected');
-                            selectedSeats.delete(seatId);
-                        } else {
-                            seat.classList.add('selected');
-                            selectedSeats.add(seatId);
-                        }
-                        updateSelectedSeatsAndPrice();
+                    seatElement.classList.add('selected');
+                    selectedSeats.add(seatId);
+                }
+                updateSummary();
+            }
+
+            function updateSummary() {
+                const seatsArray = Array.from(selectedSeats).sort();
+                seatNumbersInput.value = seatsArray.join(',');
+
+                // Update Price
+                const totalPrice = selectedSeats.size * pricePerSeat;
+                totalPriceDisplay.innerText = '₹' + totalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                // Update Visual Tags
+                selectedSeatsContainer.innerHTML = '';
+                if (seatsArray.length === 0) {
+                    selectedSeatsContainer.appendChild(noSeatsMsg);
+                    noSeatsMsg.style.display = 'block';
+                } else {
+                    noSeatsMsg.style.display = 'none';
+                    seatsArray.forEach(id => {
+                        const tag = document.createElement('span');
+                        tag.classList.add('seat-tag');
+                        tag.innerHTML = `
+                            ${id} <i class="fas fa-times" onclick="deselectSeat('${id}')"></i>
+                        `;
+                        selectedSeatsContainer.appendChild(tag);
                     });
                 }
-                row.appendChild(seat);
             }
-            seatMap.appendChild(row);
-        }
-        
-        function updateSelectedSeatsAndPrice() {
-            const seatsArray = Array.from(selectedSeats);
-            seatNumbersInput.value = seatsArray.join(',');
-            
-            const totalPrice = selectedSeats.size * pricePerSeat;
-            totalPriceDisplay.textContent = totalPrice.toFixed(2);
-        }
 
+            // Global function to deselect from tag
+            window.deselectSeat = function (seatId) {
+                const seatElement = document.querySelector(`.seat[data-seat-id="${seatId}"]`);
+                if (seatElement) {
+                    toggleSeat(seatElement, seatId);
+                }
+            };
 
-        bookingForm.addEventListener('submit', function(event) {
-            if (seatNumbersInput.value.trim() === '') {
-                event.preventDefault(); 
-                errorMessageDiv.textContent = 'Please select at least one seat before booking.';
-                errorMessageDiv.style.display = 'block';
-            } else {
-                errorMessageDiv.style.display = 'none';
-            }
+            bookingForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const errorSpan = errorMessageDiv.querySelector('span');
+
+                if (selectedSeats.size === 0) {
+                    errorSpan.textContent = 'Please select at least one seat to proceed.';
+                    errorMessageDiv.style.display = 'flex';
+                    errorMessageDiv.classList.add('animate__animated', 'animate__shakeX');
+                    return;
+                } else {
+                    errorMessageDiv.style.display = 'none';
+                }
+
+                // Show global loader
+                const loader = document.getElementById('global-loader');
+                if (loader) {
+                    loader.classList.remove('loader-hidden');
+                    loader.querySelector('.loader-text').textContent = 'Securing your seats...';
+                }
+
+                // Simulate brief delay for UX
+                setTimeout(() => {
+                    bookingForm.submit();
+                }, 800);
+            });
         });
-    });
-
-</script>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+        /*]]>*/
+    </script>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
 </body>
+
 </html>

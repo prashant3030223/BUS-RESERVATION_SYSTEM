@@ -1,31 +1,133 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header-css}"></head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Schedule - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Include Sidebar CSS -->
+    <th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar-css}"></th:block>
+    <!-- Admin Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme-toggle.css}">
+</head>
+
 <body>
-<div th:replace="~{fragments/header :: navbar}"></div>
-<div class="container mt-5">
-    <div class="col-md-6 mx-auto">
-        <div class="form-container">
-            <h4>Edit Schedule Details</h4>
-            <form th:action="@{/admin/schedules/update/{id}(id=${schedule.id})}" th:object="${schedule}" method="post">
-                <div class="mb-3">
-                    <label class="form-label">Select Bus</label>
-                    <select name="busId" class="form-control" required>
-                        <option th:each="bus : ${buses}" th:value="${bus.id}" th:text="${bus.busName} + ' - ' + ${bus.busNumber}" th:selected="${schedule.bus != null && schedule.bus.id == bus.id}"></option>
-                    </select>
+    <!-- Admin Sidebar Fragment -->
+    <div th:replace="~{fragments/admin-sidebar :: admin-sidebar}"></div>
+
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle-btn" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome-text">
+                <h1>Edit Schedule</h1>
+                <p>Update schedule information</p>
+            </div>
+            <div class="d-flex gap-3">
+                <a th:href="@{/admin/schedules}" class="btn btn-outline-light rounded-pill px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Schedules
+                </a>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Schedule Details</h3>
+                    </div>
+                    <div class="p-4">
+                        <form th:action="@{/admin/schedules/edit/{id}(id=${schedule.id})}" th:object="${schedule}"
+                            method="post">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold">
+                                        <i class="fas fa-bus me-2 text-primary"></i>Select Bus
+                                    </label>
+                                    <select name="busId" class="form-select" required>
+                                        <option th:each="bus : ${buses}" th:value="${bus.id}"
+                                            th:text="${bus.busName} + ' - ' + ${bus.busNumber}"
+                                            th:selected="${schedule.bus != null && schedule.bus.id == bus.id}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold">
+                                        <i class="fas fa-rupee-sign me-2 text-success"></i>Price (₹)
+                                    </label>
+                                    <input type="number" step="0.01" th:field="*{price}" class="form-control"
+                                        required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold">
+                                        <i class="fas fa-map-marker-alt me-2 text-info"></i>Source
+                                    </label>
+                                    <input type="text" th:field="*{source}" class="form-control" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold">
+                                        <i class="fas fa-map-marker-alt me-2 text-danger"></i>Destination
+                                    </label>
+                                    <input type="text" th:field="*{destination}" class="form-control" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold">
+                                        <i class="fas fa-clock me-2 text-warning"></i>Departure Time
+                                    </label>
+                                    <input type="datetime-local" th:field="*{departureTime}" class="form-control"
+                                        required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold">
+                                        <i class="fas fa-clock me-2 text-warning"></i>Arrival Time
+                                    </label>
+                                    <input type="datetime-local" th:field="*{arrivalTime}" class="form-control"
+                                        required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-bold">
+                                        <i class="fas fa-route me-2 text-success"></i>Distance (km)
+                                    </label>
+                                    <input type="number" step="0.1" th:field="*{distance}" class="form-control"
+                                        placeholder="Enter distance in kilometers" required />
+                                    <small class="text-muted">
+                                        <i class="fas fa-leaf text-success me-1"></i>Used for carbon emission
+                                        calculations
+                                    </small>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex gap-3 mt-3">
+                                        <button type="submit" class="btn btn-success rounded-pill flex-fill">
+                                            <i class="fas fa-save me-2"></i>Update Schedule
+                                        </button>
+                                        <a th:href="@{/admin/schedules}"
+                                            class="btn btn-outline-secondary rounded-pill flex-fill">
+                                            <i class="fas fa-times me-2"></i>Cancel
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="mb-3"><label class="form-label">Source</label><input type="text" th:field="*{source}" class="form-control" required/></div>
-                <div class="mb-3"><label class="form-label">Destination</label><input type="text" th:field="*{destination}" class="form-control" required/></div>
-                <div class="mb-3"><label class="form-label">Departure Time</label><input type="datetime-local" th:field="*{departureTime}" class="form-control" required/></div>
-                <div class="mb-3"><label class="form-label">Arrival Time</label><input type="datetime-local" th:field="*{arrivalTime}" class="form-control" required/></div>
-                <div class="mb-3"><label class="form-label">Price</label><input type="number" step="0.01" th:field="*{price}" class="form-control" required/></div>
-                <button type="submit" class="btn btn-primary">Update Schedule</button>
-                <a th:href="@{/admin/schedules}" class="btn btn-secondary">Cancel</a>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-<div th:replace="~{fragments/footer :: footer}"></div>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+    <script>
+    </script>
 </body>
+
 </html>

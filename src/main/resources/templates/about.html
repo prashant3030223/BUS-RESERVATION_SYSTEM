@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header-css}">
+    <title>About Us - TourNtravels</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+
+    <main class="main-content">
+        <div class="container mt-5 mb-5">
+            <!-- Page Header -->
+            <div class="text-center mb-5 animate__animated animate__fadeInDown">
+                <h1 class="fw-bold mb-3">About TourNtravels</h1>
+                <p class="lead text-muted">Your trusted partner in bus travel</p>
+            </div>
+
+            <!-- Mission & Vision -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6 animate__animated animate__fadeInLeft">
+                    <div class="glass-card p-4 h-100">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
+                            <h3 class="fw-bold">Our Mission</h3>
+                        </div>
+                        <p class="text-muted">
+                            To revolutionize bus travel by providing safe, comfortable, and affordable transportation
+                            solutions powered by cutting-edge technology and exceptional customer service.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 animate__animated animate__fadeInRight">
+                    <div class="glass-card p-4 h-100">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-eye fa-3x text-secondary mb-3"></i>
+                            <h3 class="fw-bold">Our Vision</h3>
+                        </div>
+                        <p class="text-muted">
+                            To become the leading bus reservation platform, connecting millions of travelers
+                            with seamless booking experiences and premium travel comfort across the nation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Story -->
+            <div class="glass-card p-5 mb-5 animate__animated animate__fadeInUp">
+                <h2 class="fw-bold mb-4 text-center">Our Story</h2>
+                <p class="text-muted mb-3">
+                    Founded in 2024, TourNtravels emerged from a simple vision: to make bus travel as convenient
+                    and enjoyable as possible. We recognized the challenges travelers faced with traditional booking
+                    methods and set out to create a platform that combines technology with hospitality.
+                </p>
+                <p class="text-muted mb-3">
+                    Today, we serve thousands of customers daily, offering AI-powered route optimization,
+                    real-time tracking, and a seamless booking experience. Our commitment to safety, punctuality,
+                    and customer satisfaction has made us a trusted name in the industry.
+                </p>
+                <p class="text-muted">
+                    As we continue to grow, we remain dedicated to our core values: innovation, reliability,
+                    and putting our customers first in everything we do.
+                </p>
+            </div>
+
+            <!-- Key Features -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-4 animate__animated animate__fadeInUp" data-aos-delay="100">
+                    <div class="glass-card p-4 text-center h-100">
+                        <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                        <h4 class="fw-bold mb-3">Safe & Secure</h4>
+                        <p class="text-muted">
+                            All our buses are regularly maintained and drivers are thoroughly verified for your safety.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 animate__animated animate__fadeInUp" data-aos-delay="200">
+                    <div class="glass-card p-4 text-center h-100">
+                        <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                        <h4 class="fw-bold mb-3">AI-Powered</h4>
+                        <p class="text-muted">
+                            Smart routing and predictive analytics ensure optimal travel times and experiences.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 animate__animated animate__fadeInUp" data-aos-delay="300">
+                    <div class="glass-card p-4 text-center h-100">
+                        <i class="fas fa-headset fa-3x text-danger mb-3"></i>
+                        <h4 class="fw-bold mb-3">24/7 Support</h4>
+                        <p class="text-muted">
+                            Our dedicated support team is always available to assist you with any queries.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="glass-card p-5 animate__animated animate__fadeInUp">
+                <h2 class="fw-bold mb-4 text-center">Our Impact</h2>
+                <div class="row text-center">
+                    <div class="col-md-3 mb-4">
+                        <h2 class="fw-bold text-primary mb-2">10,000+</h2>
+                        <p class="text-muted">Happy Customers</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h2 class="fw-bold text-secondary mb-2">500+</h2>
+                        <p class="text-muted">Buses</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h2 class="fw-bold text-success mb-2">100+</h2>
+                        <p class="text-muted">Routes</p>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <h2 class="fw-bold text-danger mb-2">99.9%</h2>
+                        <p class="text-muted">On-Time Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+
+</html>

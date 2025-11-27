@@ -1,69 +1,165 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/header :: header-css}"></head>
+
 <body>
 
-<div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
-<div class="container mt-5">
-    <div class="content-container">
-        <div class="text-center mb-4">
-            <h2>🎉 Booking Confirmed! 🎉</h2>
-            <p>Aapka ticket safaltapoorvak book ho gaya hai.</p>
-        </div>
-
-        <div class="card">
-            <div class="card-header bg-dark text-white">
-                <h4 class="mb-0"><i class="fa-solid fa-ticket me-2"></i>Your E-Ticket</h4>
+    <div class="ticket-page-wrapper" style="padding-top: 100px; min-height: 80vh;">
+        <div class="container mt-5 mb-5">
+            <!-- Success Header -->
+            <div class="text-center mb-5 animate__animated animate__bounceIn">
+                <div class="mb-3">
+                    <span style="font-size: 3rem;">🎉</span>
+                </div>
+                <h1 class="display-4 fw-bold text-white mb-2">Booking <span class="text-gradient">Confirmed!</span></h1>
+                <p class="text-muted-light fs-5">Your journey begins here. Safe travels!</p>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h5>Passenger Details</h5>
-                        <div class="d-flex align-items-center mb-3">
-                            <img th:if="${booking.user.profilePhotoUrl}"
-                                 th:src="@{${booking.user.profilePhotoUrl}}"
-                                 class="img-fluid rounded-circle me-3"
-                                 style="width: 80px; height: 80px; object-fit: cover;"
-                                 alt="Passenger Photo">
-                            
+
+            <!-- E-Ticket Card -->
+            <div
+                class="ticket-card glass-card animate__animated animate__fadeInUp border-0 overflow-hidden position-relative">
+                <!-- Decorative Elements -->
+                <div class="position-absolute top-0 start-0 w-100 h-100"
+                    style="background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.1), transparent 40%); pointer-events: none;">
+                </div>
+
+                <!-- Ticket Header -->
+                <div class="ticket-header d-flex justify-content-between align-items-center p-4 border-bottom"
+                    style="border-color: rgba(255,255,255,0.1) !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box me-3">
+                            <i class="fa-solid fa-ticket text-white"></i>
+                        </div>
+                        <span class="h5 mb-0 text-white ls-1">E-TICKET</span>
+                    </div>
+                    <span class="badge bg-success bg-opacity-20 text-success px-3 py-2 rounded-pill">
+                        <i class="fas fa-check-circle me-1"></i> CONFIRMED
+                    </span>
+                </div>
+
+                <!-- Ticket Body -->
+                <div class="ticket-body p-4 p-md-5">
+                    <div class="row g-5">
+                        <!-- Left Section: Passenger & Trip Details -->
+                        <div class="col-lg-8 border-end border-secondary"
+                            style="border-color: rgba(255,255,255,0.1) !important;">
+                            <!-- Passenger Details -->
+                            <div class="mb-5">
+                                <h5 class="section-heading mb-4">PASSENGER DETAILS</h5>
+                                <div class="d-flex align-items-center">
+                                    <img th:if="${booking.user.profilePhotoUrl}"
+                                        th:src="@{${booking.user.profilePhotoUrl}}" class="passenger-photo me-4"
+                                        alt="Passenger Photo">
+                                    <div class="passenger-details">
+                                        <h3 class="text-white fw-bold mb-1" th:text="${booking.user.fullName}">Passenger
+                                            Name</h3>
+                                        <div class="d-flex gap-4 text-muted-light mt-2">
+                                            <span th:if="${booking.user.mobile}">
+                                                <i class="fas fa-phone-alt me-2 text-primary"></i>
+                                                <span th:text="${booking.user.mobile}">Phone</span>
+                                            </span>
+                                            <span th:if="${booking.user.address}">
+                                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                                <span th:text="${booking.user.address}">Address</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trip Details -->
                             <div>
-                                <p class="mb-0"><strong>Name:</strong> <span th:text="${booking.user.fullName}"></span></p>
-                                <p class="mb-0" th:if="${booking.user.mobile}">
-                                    <strong>Phone:</strong> <span th:text="${booking.user.mobile}"></span>
-                                </p>
-                                <p class="mb-0" th:if="${booking.user.address}">
-                                    <strong>Address:</strong> <span th:text="${booking.user.address}"></span>
-                                </p>
+                                <h5 class="section-heading mb-4">TRIP DETAILS</h5>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="text-muted-light small text-uppercase mb-1">Bus Info</label>
+                                        <div class="d-flex align-items-center">
+                                            <div class="fw-bold text-white h5 mb-0 me-2"
+                                                th:text="${booking.schedule.bus.busName}">Bus Name</div>
+                                            <span class="badge bg-primary bg-opacity-10 text-primary-light"
+                                                th:text="${booking.schedule.bus.busNumber}">DL01-CD5678</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted-light small text-uppercase mb-1">Route</label>
+                                        <div class="fw-bold text-white h5 mb-0">
+                                            <span th:text="${booking.schedule.source}">Source</span>
+                                            <i class="fas fa-arrow-right mx-2 text-muted-light"
+                                                style="font-size: 0.8rem;"></i>
+                                            <span th:text="${booking.schedule.destination}">Destination</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="text-muted-light small text-uppercase mb-1">Departure Time</label>
+                                        <div class="fw-bold text-white h4 mb-0"
+                                            th:text="${#temporals.format(booking.schedule.departureTime, 'dd MMM yyyy, hh:mm a')}">
+                                            22-Nov-2025, 01:18 pm
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <hr>
-                        <h5>Trip Details</h5>
-                        <p><strong>Bus:</strong> <span th:text="${booking.schedule.bus.busName} + ' (' + ${booking.schedule.bus.busNumber} + ')'"></span></p>
-                        <p><strong>Route:</strong> <span th:text="${booking.schedule.source} + ' to ' + ${booking.schedule.destination}"></span></p>
-                        <p><strong>Departure:</strong> <span th:text="${#temporals.format(booking.schedule.departureTime, 'dd-MMM-yyyy, hh:mm a')}"></span></p>
-                    </div>
-                    <div class="col-md-4 text-md-end">
-                        <p><strong>Booking ID:</strong> <br><span class="fw-bold" th:text="${booking.id}"></span></p>
-                        <p><strong>Booking Date:</strong> <br><span th:text="${#temporals.format(booking.bookingDate, 'dd-MMM-yyyy')}"></span></p>
-                        <p><strong>Seats:</strong> <br><span class="badge bg-success fs-5" th:text="${booking.seatNumbers}"></span></p>
-                        <p><strong>Total Price:</strong> <br><span class="fs-4 fw-bold" th:text="'₹' + ${booking.totalPrice}"></span></p>
+                        <!-- Right Section: Booking Info -->
+                        <div class="col-lg-4">
+                            <div class="ps-lg-3">
+                                <!-- QR Code -->
+                                <div class="mb-4 text-center">
+                                    <img th:src="@{'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=BookingID:' + ${booking.id}}"
+                                        alt="QR Code" class="img-fluid rounded border border-light p-2 bg-white">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="text-muted-light small text-uppercase mb-1">Booking ID</label>
+                                    <div class="font-monospace text-white h5" th:text="'#' + ${booking.id}">3</div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="text-muted-light small text-uppercase mb-1">Booking Date</label>
+                                    <div class="text-white h5"
+                                        th:text="${#temporals.format(booking.bookingDate, 'dd MMM yyyy')}">22-Nov-2025
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="text-muted-light small text-uppercase mb-1">Seat Numbers</label>
+                                    <div class="text-gradient fw-bold h3" th:text="${booking.seatNumbers}">1B</div>
+                                </div>
+                                <div class="pt-4 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                                    <label class="text-muted-light small text-uppercase mb-1">Total Price</label>
+                                    <div class="text-white display-6 fw-bold" th:text="'₹' + ${booking.totalPrice}">
+                                        ₹97.0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Ticket Footer -->
+                <div class="ticket-footer p-3 text-center bg-dark bg-opacity-50 border-top"
+                    style="border-color: rgba(255,255,255,0.1) !important;">
+                    <small class="text-muted-light">Please show this e-ticket during boarding. Happy Journey!</small>
+                </div>
             </div>
-             <div class="card-footer text-muted text-center">
-                Please show this e-ticket during boarding. Happy Journey!
+
+            <!-- Action Buttons -->
+            <div
+                class="text-center mt-5 animate__animated animate__fadeInUp animate__delay-1s d-flex justify-content-center gap-3 flex-wrap">
+
+                <a th:href="@{/booking/invoice/{id}(id=${booking.id})}" class="btn btn-outline px-4 rounded-pill">
+                    <i class="fas fa-file-invoice me-2"></i>Download Invoice
+                </a>
+                <a th:href="@{/my-bookings}" class="btn btn-primary px-4 rounded-pill shadow-lg">
+                    My Bookings <i class="fas fa-arrow-right ms-2"></i>
+                </a>
             </div>
-        </div>
-        <div class="text-center mt-3">
-             <a th:href="@{/my-bookings}" class="btn btn-secondary">View All My Bookings</a>
         </div>
     </div>
-</div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
 
 </body>
+
 </html>

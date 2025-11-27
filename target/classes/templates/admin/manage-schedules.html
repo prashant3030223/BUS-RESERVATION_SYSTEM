@@ -1,62 +1,270 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header-css}"></head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Schedules - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Include Sidebar CSS -->
+    <th:block th:replace="~{fragments/admin-sidebar :: admin-sidebar-css}"></th:block>
+    <!-- Admin Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme-toggle.css}">
+</head>
+
 <body>
-<div th:replace="~{fragments/header :: navbar}"></div>
-<div class="container mt-5">
-    <div class="accordion mb-4" id="addScheduleAccordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">Click to Add a New Schedule</button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#addScheduleAccordion">
-                <div class="accordion-body form-container">
-                    <form th:action="@{/admin/schedules/add}" th:object="${schedule}" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Select Bus</label>
-                            <select name="busId" class="form-control" required>
-                                <option th:each="bus : ${buses}" th:value="${bus.id}" th:text="${bus.busName} + ' - ' + ${bus.busNumber}"></option>
+    <!-- Admin Sidebar Fragment -->
+    <div th:replace="~{fragments/admin-sidebar :: admin-sidebar}"></div>
+
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle-btn" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome-text">
+                <h1>Manage Schedules</h1>
+                <p>Create and manage bus routes and timings</p>
+            </div>
+            <div class="d-flex gap-3">
+                <button class="btn btn-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#addScheduleCollapse">
+                    <i class="fas fa-plus me-2"></i>Add New Schedule
+                </button>
+            </div>
+        </div>
+
+        <!-- Add Schedule Form (Collapsible) -->
+        <div class="collapse mb-4" id="addScheduleCollapse">
+            <div class="glass-card">
+                <h3 class="chart-title mb-4">Create New Schedule</h3>
+                <form th:action="@{/admin/schedules/add}" th:object="${schedule}" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary">Select Bus</label>
+                            <select name="busId" class="form-select" required>
+                                <option th:each="bus : ${buses}" th:value="${bus.id}"
+                                    th:text="${bus.busName} + ' - ' + ${bus.busNumber}"></option>
                             </select>
                         </div>
-                        <div class="mb-3"><label class="form-label">Source</label><input type="text" th:field="*{source}" class="form-control" required/></div>
-                        <div class="mb-3"><label class="form-label">Destination</label><input type="text" th:field="*{destination}" class="form-control" required/></div>
-                        <div class="mb-3"><label class="form-label">Departure Time</label><input type="datetime-local" th:field="*{departureTime}" class="form-control" required/></div>
-                        <div class="mb-3"><label class="form-label">Arrival Time</label><input type="datetime-local" th:field="*{arrivalTime}" class="form-control" required/></div>
-                        <div class="mb-3"><label class="form-label">Price</label><input type="number" step="0.01" th:field="*{price}" class="form-control" required/></div>
-                        <button type="submit" class="btn btn-primary">Add Schedule</button>
-                    </form>
-                </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary">Price (₹)</label>
+                            <input type="number" step="0.01" th:field="*{price}" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary">Source</label>
+                            <input type="text" th:field="*{source}" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary">Destination</label>
+                            <input type="text" th:field="*{destination}" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary">Departure Time</label>
+                            <input type="datetime-local" th:field="*{departureTime}" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary">Arrival Time</label>
+                            <input type="datetime-local" th:field="*{arrivalTime}" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary">Distance (km)</label>
+                            <input type="number" step="0.1" th:field="*{distance}" class="form-control"
+                                placeholder="Enter distance in kilometers" required />
+                            <small class="text-muted">
+                                <i class="fas fa-leaf text-success me-1"></i>Used for carbon emission calculations
+                            </small>
+                        </div>
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="btn btn-success rounded-pill px-4">
+                                <i class="fas fa-save me-2"></i>Save Schedule
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Schedules Table -->
+        <div class="glass-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Active Schedules</h3>
+                <div class="text-secondary small">Total Schedules: <span th:text="${schedules.size()}">0</span></div>
+            </div>
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Bus Info</th>
+                            <th>Route</th>
+                            <th>Distance</th>
+                            <th>Occupancy</th>
+                            <th>Departure</th>
+                            <th>Status</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${schedules}">
+                            <td th:text="'#' + ${s.id}">#1</td>
+                            <td>
+                                <div class="d-flex align-items-center" th:if="${s.bus != null}">
+                                    <div class="stat-icon-wrapper"
+                                        style="width: 32px; height: 32px; font-size: 0.9rem; margin-bottom: 0; margin-right: 0.75rem; background: rgba(139, 92, 246, 0.1); color: var(--neon-secondary);">
+                                        <i class="fas fa-bus"></i>
+                                    </div>
+                                    <span
+                                        th:text="${s.bus.busName != null ? s.bus.busName : 'Unknown Bus'}">Volvo</span>
+                                </div>
+                                <div th:if="${s.bus == null}" class="text-danger small">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>Bus Removed
+                                </div>
+                            </td>
+                            <td
+                                th:text="${(s.source != null ? s.source : 'N/A') + ' ➝ ' + (s.destination != null ? s.destination : 'N/A')}">
+                                Del ➝ Mum</td>
+                            <td>
+                                <span th:if="${s.distance > 0}" class="text-success">
+                                    <i class="fas fa-route me-1"></i>
+                                    <span th:text="${s.distance} + ' km'">0 km</span>
+                                </span>
+                                <span th:if="${s.distance == 0}" class="text-muted small">Not set</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2"
+                                    th:if="${s.bus != null and s.bus.totalSeats > 0}">
+                                    <div class="progress flex-grow-1 bg-dark" style="height: 6px; width: 60px;">
+                                        <div class="progress-bar bg-info" role="progressbar"
+                                            th:style="'width: ' + ${(s.bus.totalSeats - s.availableSeats) * 100.0 / s.bus.totalSeats} + '%'">
+                                        </div>
+                                    </div>
+                                    <span class="small text-secondary"
+                                        th:text="${(s.bus.totalSeats - s.availableSeats) + '/' + s.bus.totalSeats}">10/40</span>
+                                </div>
+                                <span th:if="${s.bus == null}" class="text-muted small">N/A</span>
+                                <span th:if="${s.bus != null and s.bus.totalSeats == 0}"
+                                    class="text-muted small">Invalid Seats</span>
+                            </td>
+                            <td
+                                th:text="${s.departureTime != null ? #temporals.format(s.departureTime, 'dd MMM, HH:mm') : 'N/A'}">
+                                01 Jan, 10:00</td>
+                            <td>
+                                <span th:if="${s.status == 'ON_TIME'}" class="badge bg-success">On Time</span>
+                                <span th:if="${s.status == 'DELAYED'}" class="badge bg-warning text-dark">Delayed (<span
+                                        th:text="${s.delayMinutes}"></span>m)</span>
+                                <span th:if="${s.status == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                            </td>
+                            <td class="fw-bold text-success" th:text="'₹' + ${s.price}">₹1500</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/admin/schedule/{id}/bookings(id=${s.id})}"
+                                        class="btn btn-sm btn-outline-primary rounded-circle" title="View Bookings">
+                                        <i class="fas fa-users"></i>
+                                    </a>
+                                    <a th:href="@{/admin/schedules/edit/{id}(id=${s.id})}"
+                                        class="btn btn-sm btn-outline-warning rounded-circle" title="Edit">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <a th:href="@{/admin/schedules/delete/{id}(id=${s.id})}"
+                                        class="btn btn-sm btn-outline-danger rounded-circle" title="Delete"
+                                        onclick="return confirm('Are you sure?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-info rounded-circle"
+                                        title="Update Status"
+                                        th:attr="data-schedule-id=${s.id}, data-status=${s.status != null ? s.status : 'ON_TIME'}, data-delay=${s.delayMinutes != null ? s.delayMinutes : 0}"
+                                        onclick="openStatusModal(this.getAttribute('data-schedule-id'), this.getAttribute('data-status'), this.getAttribute('data-delay'))">
+                                        <i class="fas fa-clock"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(schedules)}">
+                            <td colspan="9" class="text-center py-4 text-secondary">
+                                <i class="fas fa-calendar-times fa-3x mb-3 d-block opacity-50"></i>
+                                No schedules found.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header"><h4>Existing Schedules</h4></div>
-        <div class="card-body">
-            <table class="table table-hover custom-table">
-                <thead><tr><th>ID</th><th>Bus</th><th>Route</th><th>Departure</th><th>Price</th><th>Actions</th></tr></thead>
-                <tbody>
-                    <tr th:each="s : ${schedules}">
-                        <td th:text="${s.id}"></td>
-                        <td th:text="${s.bus.busName}"></td>
-                        <td th:text="${s.source} + ' to ' + ${s.destination}"></td>
-                        <td>
-                            <span class="badge bg-info" th:text="${(s.bus.totalSeats - s.availableSeats) + ' / ' + s.bus.totalSeats}"></span>
-                        </td>
-                        <td th:text="${#temporals.format(s.departureTime, 'dd-MMM, HH:mm')}"></td>
-                        <td th:text="'₹' + ${s.price}"></td>
-                        <td>
-                            <a th:href="@{/admin/schedule/{id}/bookings(id=${s.id})}" class="btn btn-success btn-sm">View</a>
-                            
-                            <a th:href="@{/admin/schedules/edit/{id}(id=${s.id})}" class="btn btn-warning btn-sm">Edit</a>
-                            <a th:href="@{/admin/schedules/delete/{id}(id=${s.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+    <!-- Update Status Modal -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Update Schedule Status</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form id="updateStatusForm" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label text-secondary">Status</label>
+                            <select name="status" class="form-select" id="statusSelect">
+                                <option value="ON_TIME">On Time</option>
+                                <option value="DELAYED">Delayed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="delayInputGroup" style="display: none;">
+                            <label class="form-label text-secondary">Delay (Minutes)</label>
+                            <input type="number" name="delayMinutes" class="form-control" value="0">
+                            <small class="text-muted">Delays > 60 mins trigger automated compensation.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<div th:replace="~{fragments/footer :: footer}"></div>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+    <script>
+        function openStatusModal(scheduleId, currentStatus, currentDelay) {
+            const form = document.getElementById('updateStatusForm');
+            form.action = '/admin/schedules/update-status/' + scheduleId;
+
+            const statusSelect = document.getElementById('statusSelect');
+            statusSelect.value = currentStatus;
+
+            const delayGroup = document.getElementById('delayInputGroup');
+            const delayInput = delayGroup.querySelector('input');
+            delayInput.value = currentDelay;
+
+            if (currentStatus === 'DELAYED') {
+                delayGroup.style.display = 'block';
+            } else {
+                delayGroup.style.display = 'none';
+            }
+
+            statusSelect.addEventListener('change', function () {
+                if (this.value === 'DELAYED') {
+                    delayGroup.style.display = 'block';
+                } else {
+                    delayGroup.style.display = 'none';
+                }
+            });
+
+            new bootstrap.Modal(document.getElementById('updateStatusModal')).show();
+        }
+    </script>
 </body>
+
 </html>

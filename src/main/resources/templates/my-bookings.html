@@ -1,50 +1,197 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/header :: header-css}"></head>
+
 <body>
-<div th:replace="~{fragments/header :: navbar}"></div>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
-<div class="container mt-5">
-    <div class="content-container">
-        <h2 class="mb-4">My Bookings</h2>
-        <div th:if="${param.cancel_success}" class="alert alert-success">Booking successfully cancelled.</div>
-        <div th:if="${param.error}" class="alert alert-danger">You can only cancel your own bookings.</div>
-
-        <div th:if="${bookings.isEmpty()}">
-            <div class="alert alert-info">You have no bookings yet.</div>
-        </div>
-        <div th:if="${!bookings.isEmpty()}">
-            <div class="card mb-3" th:each="booking : ${bookings}">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span th:text="'Booking Date: ' + ${#temporals.format(booking.bookingDate, 'dd-MMM-yyyy')}"></span>
-                    <span class="badge" 
-                          th:classappend="${booking.status == 'CONFIRMED'} ? 'bg-success' : 'bg-danger'"
-                          th:text="${booking.status}"></span>
+    <main class="main-content" style="padding-top: 100px; min-height: 80vh;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-5 animate__animated animate__fadeInDown">
+                <div>
+                    <h2 class="display-5 fw-bold mb-1">My <span class="text-gradient">Bookings</span></h2>
+                    <p class="text-muted-light">Manage your upcoming and past journeys</p>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${booking.schedule.bus.busName} + ' (' + ${booking.schedule.bus.busNumber} + ')'"></h5>
-                    <p class="card-text"><strong>Route:</strong> <span th:text="${booking.schedule.source}"></span> to <span th:text="${booking.schedule.destination}"></span></p>
-                    <p class="card-text"><strong>Departure:</strong> <span th:text="${#temporals.format(booking.schedule.departureTime, 'dd-MMM-yyyy HH:mm')}"></span></p>
-                    <p class="card-text"><strong>Seat(s):</strong> <b th:text="${booking.seatNumbers}"></b></p>
-                    
-                    <div class="d-flex gap-2 mt-3">
-                        <a th:href="@{/ticket/{id}(id=${booking.id})}" class="btn btn-primary" th:if="${booking.status == 'CONFIRMED'}">
-                            <i class="fa-solid fa-ticket me-1"></i>View Ticket
-                        </a>
-                        
-                        <form th:action="@{/booking/cancel/{id}(id=${booking.id})}" method="post" th:if="${booking.status == 'CONFIRMED'}">
-                             <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this booking?')">
-                                 Cancel Booking
-                             </button>
-                        </form>
+                <a href="/" class="btn btn-primary rounded-pill shadow-lg">
+                    <i class="fas fa-plus me-2"></i>Book New Trip
+                </a>
+            </div>
+
+            <div th:if="${param.cancel_success}"
+                class="alert alert-success glass-card border-success animate__animated animate__fadeIn d-flex align-items-center mb-4">
+                <i class="fas fa-check-circle me-2 text-success"></i>
+                <span>Booking successfully cancelled.</span>
+            </div>
+            <div th:if="${param.error}"
+                class="alert alert-danger glass-card border-danger animate__animated animate__fadeIn d-flex align-items-center mb-4">
+                <i class="fas fa-exclamation-circle me-2 text-danger"></i>
+                <span>Action failed or unauthorized access.</span>
+            </div>
+
+            <div th:if="${bookings.isEmpty()}" class="text-center py-5 glass-card animate__animated animate__fadeInUp">
+                <div class="mb-4 text-muted opacity-25">
+                    <i class="fas fa-ticket-alt" style="font-size: 5rem; color: var(--color-text-muted);"></i>
+                </div>
+                <h3 class="text-white mb-2">No Bookings Found</h3>
+                <p class="text-muted-light mb-4">You haven't booked any trips yet.</p>
+                <a href="/" class="btn btn-primary px-4 py-2">Start Exploring</a>
+            </div>
+
+            <div th:if="${!bookings.isEmpty()}" class="row g-4">
+                <div class="col-lg-6 animate__animated animate__fadeInUp" th:each="booking, iterStat : ${bookings}"
+                    th:style="'animation-delay: ' + ${iterStat.index * 0.1} + 's'">
+                    <div class="glass-card h-100 hover-effect position-relative overflow-hidden border-0">
+                        <!-- Status Strip -->
+                        <div class="position-absolute top-0 start-0 h-100" style="width: 4px;"
+                            th:classappend="${booking.status == 'CONFIRMED'} ? 'bg-success' : 'bg-danger'"></div>
+
+                        <div class="card-body p-4">
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-4">
+                                <div>
+                                    <h4 class="fw-bold mb-1 text-white"
+                                        th:if="${booking.schedule != null and booking.schedule.bus != null}"
+                                        th:text="${booking.schedule.bus.busName}">Bus Name</h4>
+                                    <h4 class="fw-bold mb-1 text-white"
+                                        th:unless="${booking.schedule != null and booking.schedule.bus != null}">Bus
+                                        Unavailable</h4>
+
+                                    <div class="d-flex align-items-center text-muted-light"
+                                        th:if="${booking.schedule != null and booking.schedule.bus != null}">
+                                        <i class="fas fa-bus-alt me-2"></i>
+                                        <small th:text="${booking.schedule.bus.busNumber}">Bus Number</small>
+                                        <span class="mx-2">•</span>
+                                        <small th:text="${booking.schedule.bus.totalSeats} + ' Seater'">40
+                                            Seater</small>
+                                    </div>
+                                </div>
+                                <span class="badge rounded-pill px-3 py-2"
+                                    th:classappend="${booking.status == 'CONFIRMED'} ? 'bg-success bg-opacity-20 text-success' : 'bg-danger bg-opacity-20 text-danger'">
+                                    <i class="fas fa-circle fa-xs me-1"></i>
+                                    <span th:text="${booking.status}">STATUS</span>
+                                </span>
+                            </div>
+
+                            <!-- Journey Details -->
+                            <div class="p-4 rounded-3 mb-4"
+                                style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color);">
+                                <div class="d-flex align-items-center justify-content-between position-relative">
+                                    <!-- Source -->
+                                    <div class="text-start" style="min-width: 100px;">
+                                        <div class="display-6 fw-bold text-primary-light mb-1"
+                                            th:if="${booking.schedule != null and booking.schedule.departureTime != null}"
+                                            th:text="${#temporals.format(booking.schedule.departureTime, 'HH:mm')}">
+                                            10:00</div>
+                                        <div class="display-6 fw-bold text-primary-light mb-1"
+                                            th:unless="${booking.schedule != null and booking.schedule.departureTime != null}">
+                                            --:--</div>
+
+                                        <div class="fw-bold text-white"
+                                            th:text="${booking.schedule != null ? booking.schedule.source : 'Unknown'}">
+                                            Source
+                                        </div>
+                                        <small class="text-muted-light"
+                                            th:if="${booking.schedule != null and booking.schedule.departureTime != null}"
+                                            th:text="${#temporals.format(booking.schedule.departureTime, 'EEE, dd MMM')}">Date</small>
+                                    </div>
+
+                                    <!-- Connector -->
+                                    <div class="flex-grow-1 mx-4 position-relative text-center d-none d-sm-block">
+                                        <div class="position-absolute top-50 start-0 w-100 translate-middle-y"
+                                            style="height: 2px; background: linear-gradient(to right, transparent, var(--color-primary-light), transparent); opacity: 0.5;">
+                                        </div>
+                                        <div class="position-relative bg-dark rounded-circle d-inline-flex align-items-center justify-content-center border border-secondary"
+                                            style="width: 32px; height: 32px; z-index: 1;">
+                                            <i class="fas fa-bus text-muted-light" style="font-size: 0.8rem;"></i>
+                                        </div>
+                                        <div class="mt-2 text-muted-light small">
+                                            <i class="far fa-clock me-1"></i>
+                                            <!-- Calculate duration if possible, otherwise static text or just hide -->
+                                            <span>Duration</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Destination -->
+                                    <div class="text-end" style="min-width: 100px;">
+                                        <div class="display-6 fw-bold text-secondary mb-1"
+                                            th:if="${booking.schedule != null and booking.schedule.arrivalTime != null}"
+                                            th:text="${#temporals.format(booking.schedule.arrivalTime, 'HH:mm')}">14:00
+                                        </div>
+                                        <div class="display-6 fw-bold text-secondary mb-1"
+                                            th:unless="${booking.schedule != null and booking.schedule.arrivalTime != null}">
+                                            --:--</div>
+
+                                        <div class="fw-bold text-white"
+                                            th:text="${booking.schedule != null ? booking.schedule.destination : 'Unknown'}">
+                                            Dest
+                                        </div>
+                                        <small class="text-muted-light"
+                                            th:if="${booking.schedule != null and booking.schedule.arrivalTime != null}"
+                                            th:text="${#temporals.format(booking.schedule.arrivalTime, 'EEE, dd MMM')}">Date</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer Actions -->
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top"
+                                style="border-color: rgba(255,255,255,0.1) !important;">
+                                <div>
+                                    <small class="text-muted-light d-block text-uppercase ls-1 mb-1"
+                                        style="font-size: 0.7rem;">Seat Numbers</small>
+                                    <span class="h5 mb-0 fw-bold text-gradient" th:text="${booking.seatNumbers}">A1,
+                                        A2</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/ticket/{id}(id=${booking.id})}"
+                                        class="btn btn-sm btn-outline text-white border-secondary hover-primary"
+                                        th:if="${booking.status == 'CONFIRMED'}">
+                                        <i class="fa-solid fa-ticket me-2"></i>Ticket
+                                    </a>
+
+                                    <form th:action="@{/booking/cancel/{id}(id=${booking.id})}" method="post"
+                                        th:if="${booking.status == 'CONFIRMED'}" style="display: inline;">
+                                        <button type="submit"
+                                            class="btn btn-sm btn-outline-danger border-danger text-danger hover-danger"
+                                            onclick="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.')">
+                                            Cancel
+                                        </button>
+                                    </form>
+
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-warning border-warning text-warning hover-warning reschedule-btn"
+                                        th:if="${booking.status == 'CONFIRMED' and booking.schedule != null}"
+                                        th:data-booking-id="${booking.id}" th:data-source="${booking.schedule.source}"
+                                        th:data-destination="${booking.schedule.destination}">
+                                        Reschedule
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </main>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.reschedule-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const bookingId = this.getAttribute('data-booking-id');
+                    const source = this.getAttribute('data-source');
+                    const destination = this.getAttribute('data-destination');
+
+                    if (confirm('Rescheduling will cancel your current booking and refund the amount. You will be redirected to search for a new bus. Continue?')) {
+                        window.location.href = '/booking/reschedule/' + bookingId + '?source=' + encodeURIComponent(source) + '&destination=' + encodeURIComponent(destination);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header-css}">
+    <title>Terms of Service - TourNtravels</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+
+    <main class="main-content">
+        <div class="container mt-5 mb-5">
+            <!-- Page Header -->
+            <div class="text-center mb-5 animate__animated animate__fadeInDown">
+                <h1 class="fw-bold mb-3">Terms of Service</h1>
+                <p class="lead text-muted">Last updated: November 22, 2025</p>
+            </div>
+
+            <div class="glass-card p-5 animate__animated animate__fadeInUp">
+                <div class="terms-content">
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">1. Acceptance of Terms</h2>
+                        <p class="text-muted">
+                            By accessing and using TourNtravels services, you accept and agree to be bound by
+                            these Terms of Service. If you do not agree to these terms, please do not use our services.
+                        </p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">2. Booking and Reservations</h2>
+                        <p class="text-muted mb-3">
+                            When you make a booking through our platform:
+                        </p>
+                        <ul class="text-muted">
+                            <li>You must provide accurate and complete information</li>
+                            <li>You are responsible for all charges incurred under your account</li>
+                            <li>Bookings are subject to availability</li>
+                            <li>Confirmation is sent via email upon successful booking</li>
+                            <li>You must present valid ID and e-ticket during boarding</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">3. Payment Terms</h2>
+                        <p class="text-muted mb-3">
+                            Payment policies:
+                        </p>
+                        <ul class="text-muted">
+                            <li>All prices are in local currency unless otherwise stated</li>
+                            <li>Payment must be made in full at the time of booking</li>
+                            <li>We accept major credit cards, debit cards, and digital wallets</li>
+                            <li>Service fees and taxes are included in the total price</li>
+                            <li>Failed payments may result in booking cancellation</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">4. Cancellation and Refunds</h2>
+                        <p class="text-muted mb-3">
+                            Cancellation policy:
+                        </p>
+                        <ul class="text-muted">
+                            <li>Cancellations made 24+ hours before departure: Full refund minus processing fee</li>
+                            <li>Cancellations made 12-24 hours before departure: 50% refund</li>
+                            <li>Cancellations made less than 12 hours before departure: No refund</li>
+                            <li>Refunds are processed within 5-7 business days</li>
+                            <li>No-shows are not eligible for refunds</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">5. User Responsibilities</h2>
+                        <p class="text-muted mb-3">
+                            As a user, you agree to:
+                        </p>
+                        <ul class="text-muted">
+                            <li>Arrive at the boarding point at least 15 minutes before departure</li>
+                            <li>Carry valid identification documents</li>
+                            <li>Follow bus operator rules and regulations</li>
+                            <li>Not engage in prohibited activities (smoking, alcohol, etc.)</li>
+                            <li>Respect other passengers and staff</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">6. Limitation of Liability</h2>
+                        <p class="text-muted">
+                            TourNtravels acts as an intermediary between passengers and bus operators. We are not
+                            liable for delays, cancellations, or incidents caused by bus operators, weather conditions,
+                            or other circumstances beyond our control. Our maximum liability is limited to the booking
+                            amount.
+                        </p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">7. Intellectual Property</h2>
+                        <p class="text-muted">
+                            All content on our platform, including text, graphics, logos, and software, is the property
+                            of TourNtravels and protected by copyright laws. You may not reproduce, distribute, or
+                            create derivative works without our permission.
+                        </p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">8. Account Termination</h2>
+                        <p class="text-muted">
+                            We reserve the right to suspend or terminate your account if you violate these terms,
+                            engage in fraudulent activities, or misuse our services.
+                        </p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">9. Modifications to Terms</h2>
+                        <p class="text-muted">
+                            We may modify these Terms of Service at any time. Continued use of our services after
+                            changes constitutes acceptance of the new terms.
+                        </p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="fw-bold mb-3">10. Governing Law</h2>
+                        <p class="text-muted">
+                            These terms are governed by the laws of the jurisdiction in which TourNtravels operates.
+                            Any disputes will be resolved through binding arbitration.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 class="fw-bold mb-3">11. Contact Information</h2>
+                        <p class="text-muted mb-3">
+                            For questions about these Terms of Service, contact us:
+                        </p>
+                        <ul class="text-muted list-unstyled">
+                            <li><i class="fas fa-envelope me-2 text-primary"></i>legal@tourntravels.com</li>
+                            <li><i class="fas fa-phone me-2 text-primary"></i>+1 (555) 123-4567</li>
+                            <li><i class="fas fa-map-marker-alt me-2 text-primary"></i>123 Travel Street, New York, NY
+                                10001</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+
+</html>

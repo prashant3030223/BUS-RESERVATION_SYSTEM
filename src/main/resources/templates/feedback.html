@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: header-css}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+
+    <main class="main-content">
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <!-- Error Message -->
+                    <div th:if="${error}"
+                        class="alert alert-danger alert-dismissible fade show animate__animated animate__fadeInDown"
+                        role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong th:text="${error}">Error</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div th:if="${param.success}"
+                        class="alert alert-success alert-dismissible fade show animate__animated animate__fadeInDown"
+                        role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Thank you!</strong> Your feedback has been submitted successfully.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div class="glass-card animate__animated animate__fadeInUp">
+                        <div class="card-header bg-transparent border-bottom border-light p-4 text-center">
+                            <h3 class="mb-0 fw-bold text-primary">We Value Your Feedback</h3>
+                            <p class="text-muted mb-0">Help us improve your travel experience</p>
+                        </div>
+                        <div class="card-body p-4">
+                            <form th:action="@{/feedback}" method="post" id="feedbackForm">
+                                <!-- Rating -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Rate your experience <span
+                                            class="text-danger">*</span></label>
+                                    <div class="rating-stars text-warning fs-2 mb-2">
+                                        <i class="far fa-star" data-rating="1"></i>
+                                        <i class="far fa-star" data-rating="2"></i>
+                                        <i class="far fa-star" data-rating="3"></i>
+                                        <i class="far fa-star" data-rating="4"></i>
+                                        <i class="far fa-star" data-rating="5"></i>
+                                    </div>
+                                    <input type="hidden" name="rating" id="ratingInput" required>
+                                    <small class="text-muted">Click on stars to rate</small>
+                                </div>
+
+                                <!-- Name -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Full Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="name" placeholder="John Doe" required>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Email Address <span
+                                            class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" name="email" placeholder="name@example.com"
+                                        required>
+                                </div>
+
+                                <!-- Subject -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="subject"
+                                        placeholder="What is your feedback about?" required>
+                                </div>
+
+                                <!-- Message -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Your Message <span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="message" rows="5"
+                                        placeholder="Tell us what you liked or what we can improve..."
+                                        required></textarea>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-primary w-100 rounded-pill py-3">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Feedback
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Star Rating System
+        document.addEventListener('DOMContentLoaded', function () {
+            const stars = document.querySelectorAll('.rating-stars i');
+            const ratingInput = document.getElementById('ratingInput');
+
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    const rating = this.getAttribute('data-rating');
+                    ratingInput.value = rating;
+
+                    // Update star display
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+
+                // Hover effect
+                star.addEventListener('mouseenter', function () {
+                    const rating = this.getAttribute('data-rating');
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.style.transform = 'scale(1.2)';
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseleave', function () {
+                    stars.forEach(s => {
+                        s.style.transform = 'scale(1)';
+                    });
+                });
+            });
+        });
+    </script>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+
+</html>

@@ -1,71 +1,189 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: header-css}"></head>
-<body>
-<div th:replace="~{fragments/header :: navbar}"></div>
-<main class="main-content">
-<div class="container mt-5">
-    <div class="content-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Available Buses for <span th:text="${source}"></span> to <span th:text="${destination}"></span></h2>
 
-            <div class="col-md-3">
-                <select id="sort-select" class="form-select">
-                    <option value="price,asc" th:selected="${sort == 'price,asc'}">Price: Low to High</option>
-                    <option value="price,desc" th:selected="${sort == 'price,desc'}">Price: High to Low</option>
-                    <option value="departureTime,asc" th:selected="${sort == 'departureTime,asc'}">Departure: Earliest</option>
-                </select>
+<head th:replace="~{fragments/header :: header-css}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    <main class="main-content">
+        <div class="container mt-5">
+            <div class="row">
+                <!-- Filters Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="glass-card p-4">
+                        <h5 class="fw-bold mb-4"><i class="fas fa-filter me-2"></i>Filters</h5>
+                        <form id="filterForm" th:action="@{/search}" method="get">
+                            <input type="hidden" name="source" th:value="${source}">
+                            <input type="hidden" name="destination" th:value="${destination}">
+                            <input type="hidden" name="sort" th:value="${sort}">
+
+                            <!-- Bus Type Filter -->
+                            <div class="mb-4">
+                                <label class="form-label text-muted-light fw-bold mb-2">Bus Type</label>
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="busType" value="All"
+                                            id="typeAll" th:checked="${busType == null || busType == 'All'}">
+                                        <label class="form-check-label" for="typeAll">All Types</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="busType" value="AC Seater"
+                                            id="typeACSeater" th:checked="${busType == 'AC Seater'}">
+                                        <label class="form-check-label" for="typeACSeater">AC Seater</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="busType" value="AC Sleeper"
+                                            id="typeACSleeper" th:checked="${busType == 'AC Sleeper'}">
+                                        <label class="form-check-label" for="typeACSleeper">AC
+                                            Sleeper</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="busType"
+                                            value="Non-AC Seater" id="typeNonAC"
+                                            th:checked="${busType == 'Non-AC Seater'}">
+                                        <label class="form-check-label" for="typeNonAC">Non-AC Seater</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="busType" value="Volvo AC"
+                                            id="typeVolvo" th:checked="${busType == 'Volvo AC'}">
+                                        <label class="form-check-label" for="typeVolvo">Volvo AC</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price Filter -->
+                            <div class="mb-4">
+                                <label class="form-label text-muted-light fw-bold mb-2">Max Price: <span id="priceValue"
+                                        class="fw-bold">₹2000</span></label>
+                                <input type="range" class="form-range" name="maxPrice" min="100" max="5000" step="100"
+                                    id="priceRange" th:value="${maxPrice != null ? maxPrice : 2000}"
+                                    oninput="document.getElementById('priceValue').innerText = '₹' + this.value">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill">Apply Filters</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="col-lg-9">
+                    <div class="content-container glass-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                            <div>
+                                <h2 class="mb-1 fw-bold text-white">Available <span class="text-gradient">Buses</span>
+                                </h2>
+                                <p class="text-muted-light mb-0">
+                                    <span th:text="${source}" class="fw-bold text-white"></span>
+                                    <i class="fas fa-arrow-right mx-2 text-primary"></i>
+                                    <span th:text="${destination}" class="fw-bold text-white"></span>
+                                </p>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="">
+                                    <select id="sort-select" class="form-select" onchange="updateSort(this.value)">
+                                        <option value="price,asc" th:selected="${sort == 'price,asc'}">Price: Low to
+                                            High</option>
+                                        <option value="price,desc" th:selected="${sort == 'price,desc'}">Price: High to
+                                            Low</option>
+                                        <option value="departureTime,asc" th:selected="${sort == 'departureTime,asc'}">
+                                            Departure: Earliest</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${schedules.isEmpty()}">
+                            <div class="alert alert-warning glass-card border-warning d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <span>Sorry, no buses available for this route.</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive" th:if="${!schedules.isEmpty()}">
+                            <table class="table glass-table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Bus Details</th>
+                                        <th>Departure</th>
+                                        <th>Arrival</th>
+                                        <th>Seats</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="schedule : ${schedules}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="icon-box me-3">
+                                                    <i class="fas fa-bus text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-white" th:text="${schedule.bus.busName}">
+                                                        Bus Name
+                                                    </div>
+                                                    <small class="text-muted-light"
+                                                        th:text="${schedule.bus.busType} + ' • ' + ${schedule.bus.totalSeats} + ' Seats'">Type</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-white"
+                                                th:text="${#temporals.format(schedule.departureTime, 'hh:mm a')}">10:00
+                                                AM</div>
+                                            <small class="text-muted-light"
+                                                th:text="${#temporals.format(schedule.departureTime, 'dd MMM')}">Date</small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-white"
+                                                th:text="${#temporals.format(schedule.arrivalTime, 'hh:mm a')}">02:00 PM
+                                            </div>
+                                            <small class="text-muted-light"
+                                                th:text="${#temporals.format(schedule.arrivalTime, 'dd MMM')}">Date</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill"
+                                                th:classappend="${schedule.availableSeats <= 10} ? 'bg-danger bg-opacity-10 text-danger' : 'bg-success bg-opacity-10 text-success'">
+                                                <i class="fas fa-chair me-1"></i>
+                                                <span th:text="${schedule.availableSeats} + ' Left'"></span>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-gradient h5 mb-0"
+                                                th:text="'₹' + ${#numbers.formatDecimal(schedule.price, 1, 'COMMA', 2, 'POINT')}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/book/{id}(id=${schedule.id})}"
+                                                class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
+                                                Book <i class="fas fa-arrow-right ms-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="/" class="btn btn-outline mt-4">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Search
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
-        <div th:if="${schedules.isEmpty()}">
-            <div class="alert alert-warning">Sorry, is route ke liye koi bus available nahi hai.</div>
-        </div>
-        <div class="table-responsive" th:if="${!schedules.isEmpty()}">
-            <table class="table table-hover custom-table">
-                <thead>
-                <tr>
-                    <th>Bus Name</th>
-                    <th>Departure</th>
-                    <th>Arrival</th>
-                    <th>Available Seats</th> <th>Price</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="schedule : ${schedules}">
-                    <td th:text="${schedule.bus.busName}"></td>
-                    <td th:text="${#temporals.format(schedule.departureTime, 'hh:mm a')}"></td>
-                    <td th:text="${#temporals.format(schedule.arrivalTime, 'hh:mm a')}"></td>
-                    <td>
-                        <span class="badge"
-                              th:classappend="${schedule.availableSeats <= 10} ? 'bg-danger' : 'bg-success'"
-                              th:text="${schedule.availableSeats} + ' Seats Left'">
-                        </span>
-                    </td>
-                    <td th:text="'₹' + ${#numbers.formatDecimal(schedule.price, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td><a th:href="@{/book/{id}(id=${schedule.id})}" class="btn btn-primary btn-sm">Book Now</a></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <a href="/" class="btn btn-secondary mt-3">Back to Search</a>
-    </div>
-</div>
-</main>
-<div th:replace="~{fragments/footer :: footer}"></div>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    document.getElementById('sort-select').addEventListener('change', function() {
-        const selectedSort = this.value;
-        const source = /*[[${source}]]*/ '';
-        const destination = /*[[${destination}]]*/ '';
-        
-        window.location.href = `/search?source=${source}&destination=${destination}&sort=${selectedSort}`;
-    });
-    /*]]>*/
-</script>
-<div th:replace="~{fragments/footer :: scripts}"></div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function updateSort(sortValue) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('sort', sortValue);
+            window.location.search = urlParams.toString();
+        }
+        /*]]>*/
+    </script>
+    <div th:replace="~{fragments/footer :: scripts}"></div>
 </body>
+
 </html>
